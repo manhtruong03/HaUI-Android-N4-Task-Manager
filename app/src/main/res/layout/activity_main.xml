@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="@drawable/background"
+    android:layout_height="match_parent">
+
+    <!--     Container to replace fragments-->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom_navigation" />
+
+    <!-- Bottom Navigation Bar -->
+    <!--    <com.google.android.material.bottomnavigation.BottomNavigationView-->
+    <!--        android:id="@+id/bottom_navigation"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_alignParentBottom="false"-->
+    <!--        app:menu="@menu/bottom_navigation_menu"-->
+    <!--        app:itemIconSize="24dp"-->
+    <!--        app:labelVisibilityMode="selected"-->
+    <!--        app:itemTextAppearanceActive="@style/ActiveNavItemText"-->
+    <!--        app:itemTextAppearanceInactive="@style/InactiveNavItemText"-->
+    <!--        app:itemIconTint="@drawable/nav_selector"-->
+    <!--        app:itemTextColor="@drawable/nav_selector" />-->
+
+    <com.etebarian.meowbottomnavigation.MeowBottomNavigation
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+
+        app:mbn_backgroundBottomColor="@color/backgroundBottomColor"
+        app:mbn_circleColor="@color/circleColor"
+        app:mbn_countBackgroundColor="@color/countBackgroundColor"
+        app:mbn_countTextColor="@color/countTextColor"
+        app:mbn_defaultIconColor="@color/defaultIconColor"
+        app:mbn_selectedIconColor="@color/selectedIconColor"
+        app:mbn_shadowColor="@color/shadowColor" />
+
+
+
+
+
+    <LinearLayout
+        android:id="@+id/submenu_navbar_container"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginBottom="80dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:background="@drawable/submenu_container_shadow"
+        android:padding="8dp"
+        android:visibility="gone">
+
+        <!-- Top Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <!-- Create Task Button -->
+            <TextView
+                android:id="@+id/btnCreateTask"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="15dp"
+                android:background="@drawable/submenu_rounded_card"
+                android:text="Tạo việc"
+                android:textColor="#e48fff"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:drawableLeft="@drawable/navbar_ic_add"
+                android:layout_margin="8dp" />
+
+            <!-- Edit Template Button -->
+            <TextView
+                android:id="@+id/btnEditTemplate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="12dp"
+                android:background="@drawable/submenu_rounded_card"
+                android:text="Sửa tệp mẫu"
+                android:textColor="#1d6d43"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:drawableLeft="@drawable/navbar_ic_excel"
+                android:layout_margin="8dp" />
+        </LinearLayout>
+
+
+        <!-- Second Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <!-- Import File Button -->
+            <TextView
+                android:id="@+id/btnImportFile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="15dp"
+                android:background="@drawable/submenu_rounded_card"
+                android:text="Nhập từ tệp"
+                android:textColor="#1CC3D6"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:drawableLeft="@drawable/navbar_ic_import"
+                android:layout_margin="8dp" />
+
+            <!-- Export File Button -->
+            <TextView
+                android:id="@+id/btnExportFile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="12dp"
+                android:background="@drawable/submenu_rounded_card"
+                android:text="Xuất ra tệp"
+                android:textColor="#ffb017"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:drawableLeft="@drawable/navbar_ic_export"
+                android:layout_margin="8dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
