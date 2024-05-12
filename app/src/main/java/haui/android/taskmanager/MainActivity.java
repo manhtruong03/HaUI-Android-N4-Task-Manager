@@ -35,8 +35,9 @@ import java.io.FileOutputStream;
 import haui.android.taskmanager.controller.ExcelReader;
 import haui.android.taskmanager.views.CalendarFragment;
 import haui.android.taskmanager.views.HomeFragment;
+import haui.android.taskmanager.views.ListTaskFragment;
 import haui.android.taskmanager.views.NotiFragment;
-import haui.android.taskmanager.views.TaskFragment;
+import haui.android.taskmanager.views.CreateTaskFragment;
 
 public class MainActivity extends AppCompatActivity {
     private MeowBottomNavigation bottomNavigation;
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                     // Open Task
                     enterAnimation = R.anim.enter_from_left;
                     exitAnimation = R.anim.exit_to_right;
-                    openFragment(new TaskFragment(), enterAnimation, exitAnimation);
+                    openFragment(new ListTaskFragment(), enterAnimation, exitAnimation);
                     subMenuContainer.setVisibility(View.GONE);
                     break;
                 case 5:
@@ -137,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                     // Open Task
                     enterAnimation = R.anim.enter_from_left;
                     exitAnimation = R.anim.exit_to_right;
-                    openFragment(new TaskFragment(), enterAnimation, exitAnimation);
+                    openFragment(new ListTaskFragment(), enterAnimation, exitAnimation);
                     subMenuContainer.setVisibility(View.GONE);
                     break;
                 case 5:
@@ -171,6 +172,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openFragment(Fragment fragment, int enterAnimation, int exitAnimation) {
+        if (enterAnimation == -1 || exitAnimation == -1) {
+            enterAnimation = R.anim.exit_to_left;
+            exitAnimation = R.anim.enter_from_right;
+        }
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(enterAnimation, exitAnimation)
@@ -201,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
         btnCreateTask.setOnClickListener(v -> {
             // Handle Notepad button click
 //            bottomSheetDialog.dismiss();
+            openFragment(new CreateTaskFragment(), -1, -1);
             subMenuContainer.setVisibility(View.GONE);
         });
 
@@ -233,9 +239,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void requestPermissions() {
         String[] permissions = {
-//                Manifest.permission.READ_MEDIA_IMAGES,
-//                Manifest.permission.READ_MEDIA_VIDEO,
-//                Manifest.permission.READ_MEDIA_AUDIO,
                 Manifest.permission.READ_EXTERNAL_STORAGE
         };
 
@@ -269,8 +272,7 @@ public class MainActivity extends AppCompatActivity {
             InputStream inputStream = getContentResolver().openInputStream(uri);
             if (inputStream != null) {
                 String content = ExcelReader.readExcelFile(inputStream);
-                Log.d(TAG, "Excel file content: " + content);
-//                Toast.makeText(this, "ND:" + content, Toast.LENGTH_LONG).show();
+//                Log.d(TAG, "Excel file content: " + content);
                 new AlertDialog.Builder(this)
                     .setTitle("Nội dung tệp")
                     .setMessage(content)

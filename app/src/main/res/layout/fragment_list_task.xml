@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:padding="10dp"
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center|start">
+
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:layout_marginStart="10dp"
+            android:text="Danh sách công việc"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_marginEnd="10dp"
+            android:id="@+id/list_btn_search"
+            android:src="@drawable/search_task_ic_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="#5F33E1" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="14dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/list_btn_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tất cả"
+            android:background="@drawable/border_search_button"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            />
+
+        <Space
+            android:layout_width="8dp"
+            android:layout_height="match_parent"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/list_btn_working"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đang làm"
+            android:background="@drawable/border_phanloai_listtask"
+            android:textColor="#5F33E1"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            />
+
+
+        <Space
+            android:layout_width="8dp"
+            android:layout_height="match_parent"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/list_btn_complete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hoàn Thành"
+            android:background="@drawable/border_phanloai_listtask"
+            android:textColor="#5F33E1"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            />
+
+        <Space
+            android:layout_width="8dp"
+            android:layout_height="match_parent"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/list_btn_late"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Muộn"
+            android:background="@drawable/border_phanloai_listtask"
+            android:textColor="#5F33E1"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            />
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp"/>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!--        <androidx.recyclerview.widget.RecyclerView-->
+        <!--            android:id="@+id/item_work"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            tools:listitem="@layout/job_item"-->
+        <!--            />-->
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

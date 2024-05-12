@@ -11,14 +11,14 @@ public class Task implements Serializable {
     private String endDate;
     private String endTime;
     private int priority;
-    private int tagID;
     private int statusID;
+    private int tagID;
 
     public Task() {
 
     }
 
-    public Task(int taskID, String taskName, String description, String startDate, String startTime, String endDate, String endTime, int priority, int tagID, int statusID) {
+    public Task(int taskID, String taskName, String description, String startDate, String startTime, String endDate, String endTime, int priority, int statusID, int tagID) {
         this.taskID = taskID;
         this.taskName = taskName;
         this.description = description;
@@ -27,8 +27,8 @@ public class Task implements Serializable {
         this.endDate = endDate;
         this.endTime = endTime;
         this.priority = priority;
-        this.tagID = tagID;
         this.statusID = statusID;
+        this.tagID = tagID;
     }
 
     public int getTaskID() {
