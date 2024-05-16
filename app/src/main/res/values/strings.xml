@@ -11,4 +11,6 @@
     <string name="edit">Sửa</string>
     <string name="detail">Chi tiết</string>
     <string name="search">Tìm kiếm</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

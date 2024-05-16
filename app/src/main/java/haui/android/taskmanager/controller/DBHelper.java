@@ -142,26 +142,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public Task getTaskById(int taskId) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Task task = null;
-        Cursor cursor = db.query(TABLE_TASK_NAME, new String[]{
-                        COLUMN_TASK_ID, COLUMN_TASK_NAME, COLUMN_TASK_DESCRIPTION,
-                        COLUMN_TASK_START_DATE, COLUMN_TASK_START_TIME,
-                        COLUMN_TASK_END_DATE, COLUMN_TASK_END_TIME,
-                        COLUMN_TASK_PRIORITY,
-                        COLUMN_TASK_STATUS_ID, COLUMN_TASK_TAG_ID},
-                COLUMN_TASK_ID + "=?", new String[]{String.valueOf(taskId)},
-                null, null, null);
-
-        if (cursor.moveToFirst()) {
-            task = createTaskFromCursor(cursor);
-        }
-        cursor.close();
-        db.close();
-        return task;
-    }
-
     public List<Task> getAllTasks() {
         List<Task> tasks = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -183,7 +163,125 @@ public class DBHelper extends SQLiteOpenHelper {
         return tasks;
     }
 
+    public Task getTaskById(int taskId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Task task = null;
+        Cursor cursor = db.query(TABLE_TASK_NAME, new String[]{
+                        COLUMN_TASK_ID, COLUMN_TASK_NAME, COLUMN_TASK_DESCRIPTION,
+                        COLUMN_TASK_START_DATE, COLUMN_TASK_START_TIME,
+                        COLUMN_TASK_END_DATE, COLUMN_TASK_END_TIME,
+                        COLUMN_TASK_PRIORITY,
+                        COLUMN_TASK_STATUS_ID, COLUMN_TASK_TAG_ID},
+                COLUMN_TASK_ID + "=?", new String[]{String.valueOf(taskId)},
+                null, null, null);
 
+        if (cursor.moveToFirst()) {
+            task = createTaskFromCursor(cursor);
+        }
+        cursor.close();
+        db.close();
+        return task;
+    }
+
+    public List<Task> getAllTasksByStatus(int statusId) {
+        List<Task> tasks = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_TASK_NAME, new String[]{
+                        COLUMN_TASK_ID, COLUMN_TASK_NAME, COLUMN_TASK_DESCRIPTION,
+                        COLUMN_TASK_START_DATE, COLUMN_TASK_START_TIME,
+                        COLUMN_TASK_END_DATE, COLUMN_TASK_END_TIME,
+                        COLUMN_TASK_PRIORITY,
+                        COLUMN_TASK_STATUS_ID, COLUMN_TASK_TAG_ID},
+                COLUMN_TASK_STATUS_ID +"=?", new String[]{String.valueOf(statusId)},
+                null, null, null);
+
+        // Xử lý kết quả truy vấn
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int idIndex = cursor.getColumnIndex(COLUMN_TASK_ID);
+                int taskNameIndex = cursor.getColumnIndex(COLUMN_TASK_NAME);
+                int taskPriorityIndex = cursor.getColumnIndex(COLUMN_TASK_PRIORITY);
+                int taskDescriptionIndex = cursor.getColumnIndex(COLUMN_TASK_DESCRIPTION);
+                int taskStartDayIndex = cursor.getColumnIndex(COLUMN_TASK_START_DATE);
+                int taskStartTimeIndex = cursor.getColumnIndex(COLUMN_TASK_START_TIME);
+                int taskEndDayIndex = cursor.getColumnIndex(COLUMN_TASK_END_DATE);
+                int taskEndTimeIndex = cursor.getColumnIndex(COLUMN_TASK_END_TIME);
+                int taskTagIdIndex = cursor.getColumnIndex(COLUMN_TASK_TAG_ID);
+                int taskStatusIdIndex = cursor.getColumnIndex(COLUMN_TASK_STATUS_ID);
+
+                if (idIndex != -1 && taskNameIndex != -1 && taskPriorityIndex != -1 && taskDescriptionIndex != -1 && taskStartDayIndex != -1 && taskStartTimeIndex != -1 && taskEndDayIndex != -1 && taskEndTimeIndex != -1 && taskTagIdIndex != -1 && taskStatusIdIndex != -1) {
+
+                    int id = cursor.getInt(idIndex);
+                    String taskName = cursor.getString(taskNameIndex);
+                    int taskPriority = cursor.getInt(taskPriorityIndex);
+                    String taskDescription = cursor.getString(taskDescriptionIndex);
+                    String taskStartDate = cursor.getString(taskStartDayIndex);
+                    String taskStartTime = cursor.getString(taskStartTimeIndex);
+                    String taskEndDate = cursor.getString(taskEndDayIndex);
+                    String taskEndTime = cursor.getString(taskEndTimeIndex);
+                    int taskTagId = cursor.getInt(taskTagIdIndex);
+                    int taskStatusId = cursor.getInt(taskStatusIdIndex);
+
+                    Task task = new Task(id, taskName, taskDescription, taskStartDate, taskStartTime, taskEndDate, taskEndTime, taskPriority, taskStatusId, taskTagId);
+
+                    tasks.add(task);
+                }
+            } while (cursor.moveToNext());
+
+            // Đóng Cursor sau khi sử dụng
+            cursor.close();
+        }
+        db.close();
+        return tasks;
+    }
+
+    public List<Task> searchTasks(String query) {
+        List<Task> tasks = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = "SELECT * FROM " + TABLE_TASK_NAME + " WHERE " + COLUMN_TASK_NAME + " LIKE '%" + query + "%'";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // Xử lý kết quả truy vấn
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int idIndex = cursor.getColumnIndex(COLUMN_TASK_ID);
+                int taskNameIndex = cursor.getColumnIndex(COLUMN_TASK_NAME);
+                int taskPriorityIndex = cursor.getColumnIndex(COLUMN_TASK_PRIORITY);
+                int taskDescriptionIndex = cursor.getColumnIndex(COLUMN_TASK_DESCRIPTION);
+                int taskStartDayIndex = cursor.getColumnIndex(COLUMN_TASK_START_DATE);
+                int taskStartTimeIndex = cursor.getColumnIndex(COLUMN_TASK_START_TIME);
+                int taskEndDayIndex = cursor.getColumnIndex(COLUMN_TASK_END_DATE);
+                int taskEndTimeIndex = cursor.getColumnIndex(COLUMN_TASK_END_TIME);
+                int taskTagIdIndex = cursor.getColumnIndex(COLUMN_TASK_TAG_ID);
+                int taskStatusIdIndex = cursor.getColumnIndex(COLUMN_TASK_STATUS_ID);
+
+                if (idIndex != -1 && taskNameIndex != -1 && taskPriorityIndex != -1 && taskDescriptionIndex != -1 && taskStartDayIndex != -1 && taskStartTimeIndex != -1 && taskEndDayIndex != -1 && taskEndTimeIndex != -1 && taskTagIdIndex != -1 && taskStatusIdIndex != -1) {
+
+                    int id = cursor.getInt(idIndex);
+                    String taskName = cursor.getString(taskNameIndex);
+                    int taskPriority = cursor.getInt(taskPriorityIndex);
+                    String taskDescription = cursor.getString(taskDescriptionIndex);
+                    String taskStartDate = cursor.getString(taskStartDayIndex);
+                    String taskStartTime = cursor.getString(taskStartTimeIndex);
+                    String taskEndDate = cursor.getString(taskEndDayIndex);
+                    String taskEndTime = cursor.getString(taskEndTimeIndex);
+                    int taskTagId = cursor.getInt(taskTagIdIndex);
+                    int taskStatusId = cursor.getInt(taskStatusIdIndex);
+
+                    Task task = new Task(id, taskName, taskDescription, taskStartDate, taskStartTime, taskEndDate, taskEndTime, taskPriority, taskStatusId, taskTagId);
+
+                    tasks.add(task);
+                }
+            } while (cursor.moveToNext());
+
+            // Đóng Cursor sau khi sử dụng
+            cursor.close();
+        }
+
+        db.close();
+        return tasks;
+    }
 
     private Integer safeGetInteger(Cursor cursor, String columnName) {
         int columnIndex = cursor.getColumnIndex(columnName);
