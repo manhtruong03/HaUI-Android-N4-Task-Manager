@@ -1,6 +1,7 @@
 package haui.android.taskmanager.views;
 
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,11 +15,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.activity.EdgeToEdge;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
+
 import java.util.List;
 
+import haui.android.taskmanager.MainActivity;
 import haui.android.taskmanager.R;
 import haui.android.taskmanager.controller.DBHelper;
 import haui.android.taskmanager.models.HomeInprogressAdapter;
@@ -26,7 +32,6 @@ import haui.android.taskmanager.models.HomeTaskGroupAdapter;
 import haui.android.taskmanager.models.Task;
 
 public class HomeFragment extends Fragment {
-
     DBHelper dbHelper;
     RecyclerView rcv_ingrogres, rcv_task_group;
     ProgressBar home_progress_circular1;
@@ -37,12 +42,15 @@ public class HomeFragment extends Fragment {
 
     Button home_btnViewTask;
 
+    FragmentManager fragmentManager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -56,7 +64,7 @@ public class HomeFragment extends Fragment {
         home_txtInProgress = view.findViewById(R.id.home_txtInProgress);
         home_progress_circular1 = view.findViewById(R.id.home_progress_circular1);
         home_so_luong_nhom = view.findViewById(R.id.home_task_group);
-
+        home_btnViewTask = view.findViewById(R.id.home_btnViewTask);
         dbHelper = new DBHelper(getContext());
 
 //        dbHelper.insertTask("Thiết kế giao diện","Màn hình: thống kê, thông báo","11/5/2024 00:00:00","31/12/1899 09:00:00","14/5/2024 00:00:00","31/12/1899 16:00:00",0,0,0);
@@ -78,12 +86,16 @@ public class HomeFragment extends Fragment {
         home_progress_circular1.setProgress(75);
         home_progress_circular1.setMax(100);
 
-//        home_btnViewTask.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                openFrag
-//            }
-//        });
+        home_btnViewTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = new ListTaskFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, fragment).commit();
+            }
+        });
+
+
 
     }
 //    public List<Task> getListHomeInProgress(List<Task> allListHome){
