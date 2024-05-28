@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+
+    <!--MeowBottomNavigation-->
+    <color name="selectedIconColor">#fff</color>
+    <color name="defaultIconColor">#5f33e1</color>
+    <color name="countTextColor">#fff</color>
+    <color name="countBackgroundColor">#F45E0B</color>
+    <color name="circleColor">#5f33e1</color>
+    <color name="backgroundBottomColor">#eee9ff</color>
+    <color name="shadowColor">#c2b1f5</color>
+
+    <!--Thuy-->
+    <color name="color_main">#EDE8FF</color>
+</resources>

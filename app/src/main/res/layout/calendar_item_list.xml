@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/calendar_border_item"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:layout_margin="12dp"
+
+    >
+
+    <CheckBox
+        android:id="@+id/checkboxItem"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:button="@drawable/calendar_check_circle"
+        android:checked="false"
+        android:gravity="center" />
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/txtTitleItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:text="Làm bài tập"
+            android:textColor="@color/black"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/txtDecription"
+            android:layout_width="wrap_content"
+            android:textSize="16dp"
+            android:text="Hoàn thành bài tập lớn Android"
+            android:layout_height="wrap_content"
+            android:textColor="#6A6A6A"
+            android:layout_marginBottom="8dp"/>
+        <TextView
+            android:id="@+id/txtTimeItem"
+            android:layout_width="wrap_content"
+            android:textSize="14dp"
+            android:alpha="0.8"
+            android:text="Today At 16:45"
+            android:layout_height="wrap_content"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">TaskManager</string>
+    <string name="select">Nhãn công việc</string>
+    <string name="name">Tên công việc</string>
+    <string name="description">Mô tả</string>
+    <string name="datestart">Ngày bắt đầu</string>
+    <string name="timestart">Giờ bắt đầu</string>
+    <string name="timeend">Giờ kết thúc</string>
+    <string name="dateend">Ngày kết thúc</string>
+    <string name="add">Thêm</string>
+    <string name="edit">Sửa</string>
+    <string name="detail">Chi tiết</string>
+    <string name="search">Tìm kiếm</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
