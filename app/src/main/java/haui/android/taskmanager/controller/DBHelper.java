@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import haui.android.taskmanager.models.Status;
 import haui.android.taskmanager.models.Task;
 
 import java.util.ArrayList;
@@ -345,11 +346,27 @@ public class DBHelper extends SQLiteOpenHelper {
         return taskId;
     }
 
-    public boolean updateTask(int taskId, String endDay, String endTime, int statusId) {
+    public boolean updateTask(int taskId, String taskDescription,
+                              String taskStartDay, String taskStartTime,
+                              String taskEndDay, String taskEndTime, int taskTagId) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_TASK_END_DATE, endDay);
-        values.put(COLUMN_TASK_END_TIME, endTime);
+        values.put(COLUMN_TASK_DESCRIPTION, taskDescription);
+        values.put(COLUMN_TASK_START_DATE, taskStartDay);
+        values.put(COLUMN_TASK_START_TIME, taskStartTime);
+        values.put(COLUMN_TASK_END_DATE, taskEndDay);
+        values.put(COLUMN_TASK_END_TIME, taskEndTime);
+        values.put(COLUMN_TASK_TAG_ID, taskTagId);
+
+        int rowsAffected = db.update(TABLE_TASK_NAME, values,
+                COLUMN_TASK_ID + "=?", new String[]{String.valueOf(taskId)});
+        db.close();
+        return rowsAffected > 0;
+    }
+
+    public boolean updateStatusTask(int taskId, int statusId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
         values.put(COLUMN_TASK_STATUS_ID, statusId);
 
         int rowsAffected = db.update(TABLE_TASK_NAME, values,

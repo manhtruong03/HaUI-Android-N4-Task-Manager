@@ -1,26 +1,28 @@
 package haui.android.taskmanager.views;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import haui.android.taskmanager.MainActivity;
 import haui.android.taskmanager.R;
 import haui.android.taskmanager.controller.DBHelper;
-import haui.android.taskmanager.databinding.ActivityMainBinding;
 import haui.android.taskmanager.models.Task;
 
 /**
@@ -33,7 +35,9 @@ public class ListTaskFragment extends Fragment {
     AppCompatButton btnAll, btnWorking, btnLate, btnComplete;
     AppCompatImageView btnSearch;
     LinearLayout linearLayoutList;
+    ListView listViewTask;
     DBHelper dbHelper;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -55,6 +59,7 @@ public class ListTaskFragment extends Fragment {
         btnComplete = view.findViewById(R.id.list_btn_complete);
         btnSearch = view.findViewById(R.id.list_btn_search);
         linearLayoutList = view.findViewById(R.id.linearLayoutList);
+        listViewTask = view.findViewById(R.id.list_view_task);
     }
 
     // TODO: Rename and change types and number of parameters
@@ -79,14 +84,14 @@ public class ListTaskFragment extends Fragment {
     // Phương thức để đặt trạng thái chọn cho nút và thay đổi màu
     private void setButtonSelected(AppCompatButton button) {
         button.setTextColor(Color.WHITE);
-        button.setBackgroundColor(Color.parseColor("#FEB36D"));
+        button.setBackgroundColor(Color.parseColor("#5F33E1"));
         button.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.border_search_button));
     }
 
     // Phương thức để đặt trạng thái không chọn cho nút và thay đổi màu
     private void setButtonUnselected(AppCompatButton button) {
-        button.setTextColor(Color.parseColor("#8B8888"));
-        button.setBackgroundColor(Color.parseColor("#EAE9E9"));
+        button.setTextColor(Color.parseColor("#5F33E1"));
+        button.setBackgroundColor(Color.parseColor("#EDE8FF"));
         button.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.border_phanloai_listtask));
     }
 
@@ -94,6 +99,8 @@ public class ListTaskFragment extends Fragment {
         super.onResume();
     }
 
+    List<Task> taskArrayList = new ArrayList<Task>();
+    TaskViewAdapter arrayAdapter = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -102,10 +109,12 @@ public class ListTaskFragment extends Fragment {
         initView(view);
         dbHelper = new DBHelper(getContext());
 
-        List<Task> taskList = dbHelper.getAllTasks();
+        taskArrayList.clear();
+        taskArrayList = dbHelper.getAllTasks();
+        arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
 
-        // Gán sự kiện click cho các nút
-        // Nút all task
+        listViewTask.setAdapter(arrayAdapter);
+
         btnAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,36 +123,14 @@ public class ListTaskFragment extends Fragment {
                 setButtonUnselected(btnComplete);
                 setButtonUnselected(btnLate);
 
-                Boolean check = false;
+                taskArrayList.clear();
+                taskArrayList = dbHelper.getAllTasks();
+                arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
 
-                for (int i = 0; i < taskList.size(); i++) {
-                    if (taskList.get(i).getTaskID() == 0) {
-                        check = true;
-                        break;
-                    }
-                }
-
-                dbHelper.close();
-
-                if (check) {
-
-                    FragmentTransaction transactionMain = getActivity().getSupportFragmentManager().beginTransaction();
-
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("type_to_show", 0);
-
-
-                    RecycleViewFragment recycleViewFragment = new RecycleViewFragment();
-                    recycleViewFragment.setArguments(bundle);
-
-                    transactionMain.replace(R.id.linearLayoutList, recycleViewFragment);
-                    // Commit transaction
-                    transactionMain.commit();
-                }
+                listViewTask.setAdapter(arrayAdapter);
             }
         });
 
-        // Nút task đang làm
         btnWorking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,36 +139,14 @@ public class ListTaskFragment extends Fragment {
                 setButtonUnselected(btnComplete);
                 setButtonUnselected(btnLate);
 
-                Boolean check = false;
+                taskArrayList.clear();
+                taskArrayList = dbHelper.getAllTasksByStatus(2);
+                arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
 
-                for (int i = 0; i < taskList.size(); i++) {
-                    if (taskList.get(i).getTaskID() == 1) {
-                        check = true;
-                        break;
-                    }
-                }
-
-                dbHelper.close();
-
-                if (check) {
-
-                    FragmentTransaction transactionMain = getActivity().getSupportFragmentManager().beginTransaction();
-
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("type_to_show", 1);
-
-
-                    RecycleViewFragment recycleViewFragment = new RecycleViewFragment();
-                    recycleViewFragment.setArguments(bundle);
-
-                    transactionMain.replace(R.id.linearLayoutList, recycleViewFragment);
-                    // Commit transaction
-                    transactionMain.commit();
-                }
+                listViewTask.setAdapter(arrayAdapter);
             }
         });
 
-        // Nút task hoàn thành
         btnComplete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -190,37 +155,14 @@ public class ListTaskFragment extends Fragment {
                 setButtonUnselected(btnAll);
                 setButtonUnselected(btnLate);
 
-                Boolean check = false;
+                taskArrayList.clear();
+                taskArrayList = dbHelper.getAllTasksByStatus(3);
+                arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
 
-                for (int i = 0; i < taskList.size(); i++) {
-                    if (taskList.get(i).getTaskID() == 2) {
-                        check = true;
-                        break;
-                    }
-                }
-
-                dbHelper.close();
-
-                if (check) {
-
-                    FragmentTransaction transactionMain = getActivity().getSupportFragmentManager().beginTransaction();
-
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("type_to_show", 2);
-
-
-                    RecycleViewFragment recycleViewFragment = new RecycleViewFragment();
-                    recycleViewFragment.setArguments(bundle);
-
-                    transactionMain.replace(R.id.linearLayoutList, recycleViewFragment);
-                    // Commit transaction
-                    transactionMain.commit();
-                }
+                listViewTask.setAdapter(arrayAdapter);
             }
         });
 
-
-        // Nút task muộn
         btnLate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -229,44 +171,74 @@ public class ListTaskFragment extends Fragment {
                 setButtonUnselected(btnComplete);
                 setButtonUnselected(btnAll);
 
-                Boolean check = false;
+                taskArrayList.clear();
+                taskArrayList = dbHelper.getAllTasksByStatus(4);
+                arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
 
-                for (int i = 0; i < taskList.size(); i++) {
-                    if (taskList.get(i).getTaskID() == 3) {
-                        check = true;
-                        break;
-                    }
-                }
-
-                dbHelper.close();
-
-                if (check) {
-
-                    FragmentTransaction transactionMain = getActivity().getSupportFragmentManager().beginTransaction();
-
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("type_to_show", 3);
-
-
-                    RecycleViewFragment recycleViewFragment = new RecycleViewFragment();
-                    recycleViewFragment.setArguments(bundle);
-
-                    transactionMain.replace(R.id.linearLayoutList, recycleViewFragment);
-                    // Commit transaction
-                    transactionMain.commit();
-                }
+                listViewTask.setAdapter(arrayAdapter);
             }
         });
 
-        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+        btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void handleOnBackPressed() {
-
+            public void onClick(View v) {
+                Fragment searchTaskFragment = new SearchTaskFragment();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, searchTaskFragment)
+                        .addToBackStack(null)
+                        .commit();
 
             }
         });
 
-        // Inflate the layout for this fragment
+        listViewTask.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String data = String.valueOf(taskArrayList.get(position).getTaskID());
+
+                Fragment editTaskFragment = EditTaskFragment.newInstance(data);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, editTaskFragment)
+                        .addToBackStack(null)
+                        .commit();
+
+            }
+        });
+
+        listViewTask.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                showDeleteConfirmationDialog(position);
+                return true;
+            }
+        });
+
+
+
         return view;
+    }
+
+
+    private void showDeleteConfirmationDialog(int position) {
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Delete Confirmation")
+                .setMessage("Bạn có chắc chắn xóa công việc này không?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    private DialogInterface dialog;
+                    private int which;
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        this.dialog = dialog;
+                        this.which = which;
+                        // Remove the item from the list
+                        dbHelper.deleteTask(taskArrayList.get(position).getTaskID());
+                        taskArrayList.remove(position);
+                        arrayAdapter.notifyDataSetChanged();
+                        Toast.makeText(getActivity(), "Xóa thành công.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_delete)
+                .show();
     }
 }

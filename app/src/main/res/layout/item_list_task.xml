@@ -9,43 +9,39 @@
     android:paddingLeft="8dp"
     android:paddingRight="8dp"
     android:layout_margin="12dp"
-    android:id="@+id/item_work"
-    >
+    android:id="@+id/item_work">
 
-    <CheckBox
-        android:id="@+id/checkboxItem"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:button="@drawable/list_task_ic_check"
-        android:checked="false"
-        android:gravity="center" />
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:paddingLeft="20dp">
+
         <TextView
             android:id="@+id/task_txt_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
+            android:layout_marginBottom="8dp"
             android:text="Làm bài tập"
+            android:textStyle="bold"
             android:textColor="@color/black"
-            android:layout_marginBottom="8dp"/>
+            android:textSize="20dp" />
 
         <TextView
             android:id="@+id/task_txt_decription"
             android:layout_width="wrap_content"
-            android:textSize="16dp"
-            android:text="Hoàn thành bài tập lớn Android"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Hoàn thành bài tập lớn Android"
             android:textColor="#6A6A6A"
-            android:layout_marginBottom="8dp"/>
+            android:textSize="16dp" />
+
         <TextView
-            android:id="@+id/txtTimeItem"
+            android:id="@+id/task_txt_time"
             android:layout_width="wrap_content"
-            android:textSize="14dp"
+            android:layout_height="wrap_content"
             android:alpha="0.8"
             android:text="Today At 16:45"
-            android:layout_height="wrap_content"/>
+            android:textSize="14dp" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.appcompat.widget.LinearLayoutCompat>
