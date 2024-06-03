@@ -176,31 +176,46 @@
 
         </TableRow>
 
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginTop="0dp"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:id="@+id/edit_check_working"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Đang làm công việc này"
+                android:textSize="18sp"
+                android:textColor="#3C3C3C"
+                />
+
+        </TableRow>
+
     </LinearLayout>
 
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:gravity="center_vertical">
+        android:gravity="end"
+        android:layout_margin="16dp">
 
         <Button
             android:id="@+id/edit_btn_complete"
-            android:layout_width="0dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:background="@drawable/border_edit_btn"
             android:text="Hoàn thành" />
 
-        <Space
-            android:layout_width="40dp"
-            android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/edit_btn_update"
-            android:layout_width="0dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="20dp"
             android:background="@drawable/border_phanloai_listtask"
             android:text="@string/edit" />
     </TableRow>

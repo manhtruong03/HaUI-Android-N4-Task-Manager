@@ -14,6 +14,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -42,6 +44,7 @@ public class EditTaskFragment extends Fragment {
     TextInputEditText datestart, timestart, dateend, timeend, decriptionTask, titleTask;
     ArrayAdapter<String> adapterNhans;
     Button btnUpdate, btnComplete;
+    CheckBox checkBoxWorking;
     Task currentTask;
     int IDTag;
     DBHelper dbHelper;
@@ -71,6 +74,7 @@ public class EditTaskFragment extends Fragment {
         decriptionTask = view.findViewById(R.id.edit_decription_task);
         btnUpdate = view.findViewById(R.id.edit_btn_update);
         btnComplete = view.findViewById(R.id.edit_btn_complete);
+        checkBoxWorking = view.findViewById(R.id.edit_check_working);
 
         adapterNhans = new ArrayAdapter<>(getActivity(), R.layout.item_list_nhan, nhans);
         spinner.setAdapter(adapterNhans);
@@ -94,6 +98,15 @@ public class EditTaskFragment extends Fragment {
             Integer position = Integer.valueOf(getArguments().getString(ARG_DATA));
             currentTask = dbHelper.getTaskById(position);
 
+            if(currentTask.getStatusID() == 3){
+                btnComplete.setVisibility(View.GONE);
+                checkBoxWorking.setVisibility(View.GONE);
+            }
+
+            if(currentTask.getStatusID() == 2 || currentTask.getStatusID() == 4){
+                checkBoxWorking.setVisibility(View.GONE);
+            }
+
             spinner.setSelection(currentTask.getTagID()-1);
             titleTask.setText(currentTask.getTaskName());
             decriptionTask.setText(currentTask.getDescription());
@@ -109,6 +122,17 @@ public class EditTaskFragment extends Fragment {
         timeend.setOnClickListener(v -> chooseTime(timeend));
         btnUpdate.setOnClickListener(v -> updateTask(currentTask));
         btnComplete.setOnClickListener(v -> completeTask(currentTask));
+        checkBoxWorking.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    dbHelper.updateStatusTask(currentTask.getTaskID(), 2);
+                    Toast.makeText(getActivity(), "Cập nhật trạng thái thành công.", Toast.LENGTH_SHORT).show();
+                    checkBoxWorking.setEnabled(false);
+                }
+
+            }
+        });
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -123,6 +147,10 @@ public class EditTaskFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void workingTask(Task task){
+
     }
 
     private void completeTask(Task task){
@@ -143,11 +171,10 @@ public class EditTaskFragment extends Fragment {
                     dbHelper.updateStatusTask(task.getTaskID(), 3);
                 }
 
-                Toast.makeText(getActivity(), dateNow.toString() , Toast.LENGTH_SHORT).show();
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
-
+            btnComplete.setVisibility(View.GONE);
             Toast.makeText(getActivity(), "Cập nhật trạng thái thành công.", Toast.LENGTH_SHORT).show();
         }
     }

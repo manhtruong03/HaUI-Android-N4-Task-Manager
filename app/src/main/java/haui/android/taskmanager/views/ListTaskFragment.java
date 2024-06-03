@@ -110,7 +110,8 @@ public class ListTaskFragment extends Fragment {
         dbHelper = new DBHelper(getContext());
 
         taskArrayList.clear();
-        taskArrayList = dbHelper.getAllTasks();
+        taskArrayList = dbHelper.getAllTasksByStatus(1);
+        taskArrayList.addAll(dbHelper.getAllTasksByStatus(2));
         arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
 
         listViewTask.setAdapter(arrayAdapter);
@@ -124,7 +125,8 @@ public class ListTaskFragment extends Fragment {
                 setButtonUnselected(btnLate);
 
                 taskArrayList.clear();
-                taskArrayList = dbHelper.getAllTasks();
+                taskArrayList = dbHelper.getAllTasksByStatus(1);
+                taskArrayList.addAll(dbHelper.getAllTasksByStatus(2));
                 arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
 
                 listViewTask.setAdapter(arrayAdapter);
@@ -212,8 +214,6 @@ public class ListTaskFragment extends Fragment {
                 return true;
             }
         });
-
-
 
         return view;
     }
