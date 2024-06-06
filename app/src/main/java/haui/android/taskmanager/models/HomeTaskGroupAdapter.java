@@ -46,6 +46,7 @@ public class HomeTaskGroupAdapter  extends RecyclerView.Adapter<HomeTaskGroupAda
         return 0;
     }
 
+
     public class HomeTaskGroupAdapterViewHolder extends RecyclerView.ViewHolder{
 
         private ImageView home_custom_tag_group;

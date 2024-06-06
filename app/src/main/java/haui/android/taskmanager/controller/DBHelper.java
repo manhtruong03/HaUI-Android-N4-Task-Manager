@@ -140,7 +140,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.delete(TABLE_STATUS_NAME, null, null);
         db.close();
     }
-
     public Task getTaskById(int taskId) {
         SQLiteDatabase db = this.getReadableDatabase();
         Task task = null;

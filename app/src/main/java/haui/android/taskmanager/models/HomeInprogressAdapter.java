@@ -32,7 +32,7 @@ public class HomeInprogressAdapter extends RecyclerView.Adapter<HomeInprogressAd
     public void onBindViewHolder(@NonNull HomeViewHolder holder, int position) {
         Task home = mListTask.get(position);
         if(home == null) return;
-//        holder.home_img_tag.setImageResource(home.getTagColor());
+        holder.home_img_tag.setImageResource(R.drawable.home_border_tag_blue);// dung switchcase de chon mau
         holder.home_name.setText(home.getTaskName());
         holder.home_description.setText(home.getDescription());
     }

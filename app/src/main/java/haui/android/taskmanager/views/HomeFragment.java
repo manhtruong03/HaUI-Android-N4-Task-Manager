@@ -41,9 +41,6 @@ public class HomeFragment extends Fragment {
     TextView home_txtInProgress, home_so_luong_nhom;
 
     Button home_btnViewTask;
-
-    FragmentManager fragmentManager;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 

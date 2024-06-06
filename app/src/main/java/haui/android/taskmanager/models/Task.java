@@ -14,9 +14,12 @@ public class Task implements Serializable {
     private int statusID;
     private int tagID;
 
+    // tagId, taskId, tagColor, tagName,taskName, stautusName, description
+
     public Task() {
 
     }
+    // tagColor, stautusName
 
     public Task(int taskID, String taskName, String description, String startDate, String startTime, String endDate, String endTime, int priority, int statusID, int tagID) {
         this.taskID = taskID;
