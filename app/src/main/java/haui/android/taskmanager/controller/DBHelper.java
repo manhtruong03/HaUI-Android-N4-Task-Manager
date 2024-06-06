@@ -68,17 +68,16 @@ public class DBHelper extends SQLiteOpenHelper {
             );
             db.execSQL(createCategoryTableStatement);
         }
-        initialData(db);
 
         if (!isTableExists(db, TABLE_TAG_NAME)) {
-            String createCategoryTableStatement = String.format(
+            String createTagTableStatement = String.format(
                     "CREATE TABLE %s (" +
                             "%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
                             "%s TEXT, " +
                             "%s TEXT)",
                     TABLE_TAG_NAME, COLUMN_TAG_ID, COLUMN_TAG_NAME, COLUMN_TAG_COLOR
             );
-            db.execSQL(createCategoryTableStatement);
+            db.execSQL(createTagTableStatement);
         }
 
         if (!isTableExists(db, TABLE_TASK_NAME)) {
@@ -104,6 +103,8 @@ public class DBHelper extends SQLiteOpenHelper {
             );
             db.execSQL(createTaskTableStatement);
         }
+
+        initialData(db);
     }
 
     @Override
@@ -122,6 +123,46 @@ public class DBHelper extends SQLiteOpenHelper {
         insertStatus(db, "Đang làm");
         insertStatus(db, "Hoàn thành");
         insertStatus(db, "Muộn");
+
+        // Insert tags
+        insertTag(db, "Công việc", "Red");
+        insertTag(db, "Cá nhân", "Blue");
+        insertTag(db, "Khẩn cấp", "Green");
+        insertTag(db, "Nhà", "Yellow");
+        insertTag(db, "Linh tinh", "Purple");
+
+        // Insert tasks
+        addTask(db, "Hoàn thành báo cáo", "Hoàn thành báo cáo tài chính hàng tháng.", "2024-06-01", "09:00", "2024-06-02", "17:00", 1, 1, 1);
+        addTask(db, "Họp nhóm", "Tham dự cuộc họp nhóm hàng tuần.", "2024-06-03", "10:00", "2024-06-03", "11:00", 2, 2, 2);
+        addTask(db, "Deadline dự án", "Gửi sản phẩm cuối cùng của dự án.", "2024-06-05", "14:00", "2024-06-05", "16:00", 3, 3, 3);
+        addTask(db, "Gọi cho khách hàng", "Gọi với khách hàng để thảo luận về các yêu cầu của dự án.", "2024-06-07", "13:00", "2024-06-07", "14:00", 1, 4, 4);
+        addTask(db, "Đánh giá code", "Xem lại mã được gửi bởi các thành viên trong nhóm.", "2024-06-09", "15:00", "2024-06-09", "17:00", 2, 1, 5);
+        addTask(db, "Cập nhật trang web", "Cập nhật tin tức mới nhất vào trang web công ty.", "2024-06-11", "16:00", "2024-06-11", "18:00", 3, 2, 1);
+        addTask(db, "Sửa lỗi", "Sửa lỗi do nhóm QA báo cáo..", "2024-06-13", "09:00", "2024-06-13", "12:00", 1, 3, 2);
+        addTask(db, "Tính năng mới", "Phát triển tính năng mới cho ứng dụng di động.", "2024-06-15", "10:00", "2024-06-15", "17:00", 2, 4, 3);
+        addTask(db, "Viết tài liệu", "Viết tài liệu cho API mới.", "2024-06-17", "11:00", "2024-06-17", "13:00", 3, 1, 4);
+        addTask(db, "Lên kế hoạch chạy nước rút", "Lập kế hoạch nhiệm vụ cho lần chạy nước rút tiếp theo.", "2024-06-19", "09:00", "2024-06-19", "11:00", 1, 2, 5);
+    }
+
+    private void addTask(SQLiteDatabase db, String taskName, String description, String startDate, String startTime, String endDate, String endTime, int priority, int statusID, int tagID) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TASK_NAME, taskName);
+        values.put(COLUMN_TASK_DESCRIPTION, description);
+        values.put(COLUMN_TASK_START_DATE, startDate);
+        values.put(COLUMN_TASK_START_TIME, startTime);
+        values.put(COLUMN_TASK_END_DATE, endDate);
+        values.put(COLUMN_TASK_END_TIME, endTime);
+        values.put(COLUMN_TASK_PRIORITY, priority);
+        values.put(COLUMN_TASK_STATUS_ID, statusID);
+        values.put(COLUMN_TASK_TAG_ID, tagID);
+        db.insert(TABLE_TASK_NAME, null, values);
+    }
+
+    private void insertTag(SQLiteDatabase db, String tagName, String tagColor) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TAG_NAME, tagName);
+        values.put(COLUMN_TAG_COLOR, tagColor);
+        db.insert(TABLE_TAG_NAME, null, values);
     }
 
     private long insertStatus(SQLiteDatabase db, String statusName) {
@@ -345,6 +386,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
         return taskId;
     }
+
+
 
     public boolean updateTask(int taskId, String taskDescription,
                               String taskStartDay, String taskStartTime,
