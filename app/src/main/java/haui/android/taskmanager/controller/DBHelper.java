@@ -3,12 +3,13 @@ package haui.android.taskmanager.controller;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import haui.android.taskmanager.models.Status;
+import haui.android.taskmanager.models.Tag;
 import haui.android.taskmanager.models.Task;
+import haui.android.taskmanager.models.TaskDetail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -178,9 +179,116 @@ public class DBHelper extends SQLiteOpenHelper {
         return newRowId;
     }
 
+    public Status getStatus(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_STATUS_NAME, new String[]{COLUMN_STATUS_ID, COLUMN_STATUS_NAME}, COLUMN_STATUS_ID + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            Status status = new Status(cursor.getInt(0), cursor.getString(1));
+            cursor.close();
+            db.close();
+            return status;
+        } else {
+            db.close();
+            return null;
+        }
+    }
+
+    public List<Status> getAllStatus() {
+        List<Status> statuses = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_STATUS_NAME;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Status status = new Status(cursor.getInt(0), cursor.getString(1));
+                statuses.add(status);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return statuses;
+    }
+
+    public int updateStatus(Status status) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_STATUS_NAME, status.getStatusName());
+
+        return db.update(TABLE_STATUS_NAME, values, COLUMN_STATUS_ID + " = ?", new String[]{String.valueOf(status.getStatusID())});
+    }
+
+    public void deleteStatus(int statusID) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_STATUS_NAME, COLUMN_STATUS_ID + " = ?", new String[]{String.valueOf(statusID)});
+        db.close();
+    }
+
     public void deleteAllStatusData() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_STATUS_NAME, null, null);
+        db.close();
+    }
+
+    // CRUD for TAG table
+    public long addTag(Tag tag) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TAG_NAME, tag.getTagName());
+        values.put(COLUMN_TAG_COLOR, tag.getTagColor());
+
+        long newRowId = db.insert(TABLE_TAG_NAME, null, values);
+        db.close();
+        return newRowId;
+    }
+
+    public Tag getTag(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_TAG_NAME, new String[]{COLUMN_TAG_ID, COLUMN_TAG_NAME, COLUMN_TAG_COLOR}, COLUMN_TAG_ID + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            Tag tag = new Tag(cursor.getInt(0), cursor.getString(1), cursor.getString(2));
+            cursor.close();
+            db.close();
+            return tag;
+        } else {
+            db.close();
+            return null;
+        }
+    }
+
+    public List<Tag> getAllTags() {
+        List<Tag> tags = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_TAG_NAME;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Tag tag = new Tag(cursor.getInt(0), cursor.getString(1), cursor.getString(2));
+                tags.add(tag);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return tags;
+    }
+
+    public int updateTag(Tag tag) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TAG_NAME, tag.getTagName());
+        values.put(COLUMN_TAG_COLOR, tag.getTagColor());
+
+        return db.update(TABLE_TAG_NAME, values, COLUMN_TAG_ID + " = ?", new String[]{String.valueOf(tag.getTagID())});
+    }
+
+    public void deleteTag(int tagID) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_TAG_NAME, COLUMN_TAG_ID + " = ?", new String[]{String.valueOf(tagID)});
         db.close();
     }
 
@@ -200,6 +308,59 @@ public class DBHelper extends SQLiteOpenHelper {
                 tasks.add(createTaskFromCursor(cursor));
             } while (cursor.moveToNext());
         }
+        cursor.close();
+        db.close();
+        return tasks;
+    }
+
+    public List<TaskDetail> getAllTasksDetail() {
+        List<TaskDetail> listTaskDetail = new ArrayList<>();
+        String selectQuery = "SELECT t.*, s.*, g.* " + " FROM "
+                + TABLE_TASK_NAME + " t LEFT JOIN " + TABLE_STATUS_NAME + " s ON t." + COLUMN_TASK_STATUS_ID + " = s." + COLUMN_STATUS_ID
+                + " LEFT JOIN " + TABLE_TAG_NAME + " g ON t." + COLUMN_TASK_TAG_ID + " = g." + COLUMN_TAG_ID;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Task task = new Task();
+                Status status = new Status();
+                Tag tag = new Tag();
+
+                task = createTaskFromCursor(cursor);
+                status = createStatusFromCursor(cursor);
+                tag = createTagFromCursor(cursor);
+
+                TaskDetail taskDetail = new TaskDetail(task, status, tag);
+
+                listTaskDetail.add(taskDetail);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return listTaskDetail;
+    }
+
+    public List<Task> getTasksByDay(String date) {
+        List<Task> tasks = new ArrayList<>();
+        String selectQuery = "SELECT t.*, s." + COLUMN_STATUS_NAME + ", g." + COLUMN_TAG_NAME + ", g." + COLUMN_TAG_COLOR + " FROM "
+                + TABLE_TASK_NAME + " t LEFT JOIN " + TABLE_STATUS_NAME + " s ON t." + COLUMN_TASK_STATUS_ID + " = s." + COLUMN_STATUS_ID
+                + " LEFT JOIN " + TABLE_TAG_NAME + " g ON t." + COLUMN_TASK_TAG_ID + " = g." + COLUMN_TAG_ID
+                + " WHERE t." + COLUMN_TASK_START_DATE + " = ?";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{date});
+
+
+        if (cursor.moveToFirst()) {
+            do {
+                Task task = new Task();
+                task = createTaskFromCursor(cursor);
+
+                tasks.add(task);
+            } while (cursor.moveToNext());
+        }
+
         cursor.close();
         db.close();
         return tasks;
@@ -361,7 +522,40 @@ public class DBHelper extends SQLiteOpenHelper {
                     taskStartDay, taskStartTime, taskEndDay, taskEndTime,
                     taskPriority, taskStatusId, taskTagId);
         } else {
-            throw new IllegalArgumentException("One or more essential fields are missing in the cursor.");
+
+            throw new IllegalArgumentException("createTaskFromCursor(): One or more essential fields are missing in the cursor." + "|id: " + id +
+                    "|taskName: " + taskName +
+                    "|taskDescription: " + taskDescription +
+                    "|taskStartDay: " + taskStartDay +
+                    "|taskStartTime: " + taskStartTime +
+                    "|taskEndDay: " + taskEndDay +
+                    "|taskEndTime: " + taskEndTime +
+                    "|taskPriority: " + taskPriority +
+                    "|taskStatusId: " + taskStatusId +
+                    "|taskTagId: " + taskTagId);
+        }
+    }
+
+    private Status createStatusFromCursor(Cursor cursor) {
+        Integer id = safeGetInteger(cursor, COLUMN_STATUS_ID);
+        String statusName = safeGetString(cursor, COLUMN_STATUS_NAME);
+
+        if (id != null && statusName != null) {
+            return new Status(id, statusName);
+        } else {
+            throw new IllegalArgumentException("createStatusFromCursor(): One or more essential fields are missing in the cursor.");
+        }
+    }
+
+    private Tag createTagFromCursor(Cursor cursor) {
+        Integer id = safeGetInteger(cursor, COLUMN_TAG_ID);
+        String tagName = safeGetString(cursor, COLUMN_TAG_NAME);
+        String tagColor = safeGetString(cursor, COLUMN_TAG_COLOR);
+
+        if (id != null && tagName != null && tagColor != null) {
+            return new Tag(id, tagName, tagColor);
+        } else {
+            throw new IllegalArgumentException("createTagFromCursor(): One or more essential fields are missing in the cursor.");
         }
     }
 
