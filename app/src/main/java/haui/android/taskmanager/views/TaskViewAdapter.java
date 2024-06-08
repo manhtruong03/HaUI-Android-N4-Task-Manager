@@ -51,7 +51,7 @@ public class TaskViewAdapter extends BaseAdapter {
 
         task_txt_title.setText(currentTask.getTaskName());
         task_txt_decription.setText(currentTask.getDescription());
-        task_txt_time.setText(currentTask.getEndTime() + " - " + currentTask.getEndDate());
+        task_txt_time.setText(currentTask.getStartTime() + " - " + currentTask.getStartDate() + " đến "+ currentTask.getEndTime() + " - " + currentTask.getEndDate());
 
         return convertView;
     }

@@ -347,7 +347,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String selectQuery = "SELECT t.*, s." + COLUMN_STATUS_NAME + ", g." + COLUMN_TAG_NAME + ", g." + COLUMN_TAG_COLOR + " FROM "
                 + TABLE_TASK_NAME + " t LEFT JOIN " + TABLE_STATUS_NAME + " s ON t." + COLUMN_TASK_STATUS_ID + " = s." + COLUMN_STATUS_ID
                 + " LEFT JOIN " + TABLE_TAG_NAME + " g ON t." + COLUMN_TASK_TAG_ID + " = g." + COLUMN_TAG_ID
-                + " WHERE t." + COLUMN_TASK_START_DATE + " = ?";
+                + " WHERE ? BETWEEN t." + COLUMN_TASK_START_DATE + " AND t." + COLUMN_TASK_END_DATE;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{date});
 
