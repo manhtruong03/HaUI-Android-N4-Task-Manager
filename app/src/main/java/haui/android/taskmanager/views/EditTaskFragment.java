@@ -26,8 +26,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.text.ParseException;
+import java.util.List;
+
 import haui.android.taskmanager.R;
 import haui.android.taskmanager.controller.DBHelper;
+import haui.android.taskmanager.models.Tag;
 import haui.android.taskmanager.models.Task;
 
 /**
@@ -39,7 +42,7 @@ public class EditTaskFragment extends Fragment {
 
     private static final String ARG_DATA = "data";
 
-    String[] nhans = {"Công việc", "Học tập", "Gia đình", "Sức Khỏe"};
+    List<String> nhans;
     Spinner spinner;
     TextInputEditText datestart, timestart, dateend, timeend, decriptionTask, titleTask;
     ArrayAdapter<String> adapterNhans;
@@ -65,6 +68,7 @@ public class EditTaskFragment extends Fragment {
     }
 
     private void initView(View view){
+        dbHelper = new DBHelper(getContext());
         spinner = view.findViewById(R.id.edit_spinner);
         datestart = view.findViewById(R.id.edit_date_start);
         timestart = view.findViewById(R.id.edit_time_start);
@@ -75,6 +79,12 @@ public class EditTaskFragment extends Fragment {
         btnUpdate = view.findViewById(R.id.edit_btn_update);
         btnComplete = view.findViewById(R.id.edit_btn_complete);
         checkBoxWorking = view.findViewById(R.id.edit_check_working);
+        nhans = new ArrayList<String>();
+
+        List<Tag> listTag = dbHelper.getAllTags();
+        for(int i=0; i<listTag.size(); i++){
+            nhans.add(listTag.get(i).getTagName());
+        }
 
         adapterNhans = new ArrayAdapter<>(getActivity(), R.layout.item_list_nhan, nhans);
         spinner.setAdapter(adapterNhans);
@@ -92,18 +102,17 @@ public class EditTaskFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_task, container, false);
         initView(view);
-        dbHelper = new DBHelper(getContext());
 
         if (getArguments() != null) {
             Integer position = Integer.valueOf(getArguments().getString(ARG_DATA));
             currentTask = dbHelper.getTaskById(position);
 
-            if(currentTask.getStatusID() == 3){
+            if(currentTask.getStatusID() == 3 || currentTask.getStatusID() == 4){
                 btnComplete.setVisibility(View.GONE);
                 checkBoxWorking.setVisibility(View.GONE);
             }
 
-            if(currentTask.getStatusID() == 2 || currentTask.getStatusID() == 4){
+            if(currentTask.getStatusID() == 2 ){
                 checkBoxWorking.setVisibility(View.GONE);
             }
 

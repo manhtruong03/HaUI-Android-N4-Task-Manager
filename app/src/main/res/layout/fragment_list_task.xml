@@ -121,6 +121,7 @@
             android:id="@+id/list_view_task"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:divider="@drawable/custom_divider_list_task"
             android:dividerHeight="12dp"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"/>

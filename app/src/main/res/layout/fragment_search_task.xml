@@ -69,6 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:dividerHeight="12dp"
+            android:divider="@drawable/custom_divider_list_task"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"/>
     </LinearLayout>
