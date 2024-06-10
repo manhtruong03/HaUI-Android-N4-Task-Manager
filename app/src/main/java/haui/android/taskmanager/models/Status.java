@@ -2,14 +2,14 @@ package haui.android.taskmanager.models;
 
 public class Status {
     private int statusID;
-    private String stautusName;
+    private String statusName;
 
     public Status() {
     }
 
-    public Status(int statusID, String stautusName) {
+    public Status(int statusID, String statusName) {
         this.statusID = statusID;
-        this.stautusName = stautusName;
+        this.statusName = statusName;
     }
 
     public int getStatusID() {
@@ -20,11 +20,11 @@ public class Status {
         this.statusID = statusID;
     }
 
-    public String getStautusName() {
-        return stautusName;
+    public String getStatusName() {
+        return statusName;
     }
 
-    public void setStautusName(String stautusName) {
-        this.stautusName = stautusName;
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
     }
 }
