@@ -39,6 +39,7 @@ public class HomeFragment extends Fragment{
     ProgressBar home_progress_circular1;
     HomeInprogressAdapter homeAdapter;
 
+    TextView test;
     HomeTaskGroupAdapter homeTaskGroupAdapter;
     TextView home_txtInProgress, home_so_luong_nhom, home_txtProgressCircle1;
     SQLiteDatabase db;
