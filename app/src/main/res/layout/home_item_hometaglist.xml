@@ -1,6 +1,52 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    app:cardCornerRadius="20dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/home_custom_tag_group_hometaglist"
+        android:layout_width="50sp"
+        android:layout_height="20dp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:layout_marginRight="160dp"
+        android:background="@drawable/home_border_tag_pink" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="80dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/home_ten_congviec_hometaglist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="Công việc"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TableRow android:layout_width="wrap_content"
+            android:layout_gravity=""
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/home_thoi_gian_congviec_hometaglist"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:text="09:00 - 2024-06-01"
+                android:textSize="18dp" />
+
+            <TextView
+                android:id="@+id/home_txt_progress_task_group_hometaglist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đang làm"
+                android:textStyle="bold" />
+        </TableRow>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

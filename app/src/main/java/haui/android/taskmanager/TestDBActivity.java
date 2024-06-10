@@ -3,7 +3,9 @@ package haui.android.taskmanager;
 
 import android.os.Bundle;
 import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.List;
 
 import haui.android.taskmanager.controller.DBHelper;
@@ -35,10 +37,10 @@ public class TestDBActivity extends AppCompatActivity {
 
         // Test retrieving a status
         Status status = dbHelper.getStatus((int) newStatusId);
-        Log.d(TAG, "Hàm getStatus() => Lấy StatusName: " + status.getStatusName());
+        Log.d(TAG, "Hàm getStatus() => Lấy StatusName: " + status.getStautusName());
 
         // Test updating a status
-        status.setStatusName("Cập nhật Test Status");
+        status.setStautusName("Cập nhật Test Status");
         int rowsAffected = dbHelper.updateStatus(status);
         Log.d(TAG, "Hàm updateStatus() => Updated Status Rows Affected: " + rowsAffected);
 
@@ -46,7 +48,7 @@ public class TestDBActivity extends AppCompatActivity {
         Log.d(TAG, "Hàm getAllStatus():");
         List<Status> statuses = dbHelper.getAllStatus();
         for (Status s : statuses) {
-            Log.d(TAG, "- Status: " + s.getStatusName());
+            Log.d(TAG, "- Status: " + s.getStautusName());
         }
 
         // Test deleting a status
@@ -94,7 +96,7 @@ public class TestDBActivity extends AppCompatActivity {
         Log.d(TAG, "Hàm getAllTasksDetail():");
         List<TaskDetail> listTaskDetail = dbHelper.getAllTasksDetail();
         for (TaskDetail t : listTaskDetail) {
-            Log.d(TAG, "- Task Detail: " + t.getTask().getTaskName() + ", Status: " + t.getStatus().getStatusName() + ", Tag: " + t.getTag().getTagName());
+            Log.d(TAG, "- Task Detail: " + t.getTask().getTaskName() + ", Status: " + t.getStatus().getStautusName() + ", Tag: " + t.getTag().getTagName());
         }
 
         // Test fetching tasks by day

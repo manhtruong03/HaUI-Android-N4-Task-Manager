@@ -1,20 +1,21 @@
 package haui.android.taskmanager.views;
 
+import static haui.android.taskmanager.MainActivity.bottomNavigation;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.activity.EdgeToEdge;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,19 +28,20 @@ import java.util.List;
 import haui.android.taskmanager.MainActivity;
 import haui.android.taskmanager.R;
 import haui.android.taskmanager.controller.DBHelper;
-import haui.android.taskmanager.models.HomeInprogressAdapter;
-import haui.android.taskmanager.models.HomeTaskGroupAdapter;
+import haui.android.taskmanager.models.HomeListTag;
+import haui.android.taskmanager.models.Tag;
 import haui.android.taskmanager.models.Task;
+import haui.android.taskmanager.models.TaskDetail;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment{
     DBHelper dbHelper;
     RecyclerView rcv_ingrogres, rcv_task_group;
     ProgressBar home_progress_circular1;
     HomeInprogressAdapter homeAdapter;
 
     HomeTaskGroupAdapter homeTaskGroupAdapter;
-    TextView home_txtInProgress, home_so_luong_nhom;
-
+    TextView home_txtInProgress, home_so_luong_nhom, home_txtProgressCircle1;
+    SQLiteDatabase db;
     Button home_btnViewTask;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,31 +58,37 @@ public class HomeFragment extends Fragment {
         if (getActivity() != null) {
             EdgeToEdge.enable(getActivity());
         }
-        rcv_ingrogres = view.findViewById(R.id.rcv_inprogress);
-        rcv_task_group = view.findViewById(R.id.rcv_task_group);
-        home_txtInProgress = view.findViewById(R.id.home_txtInProgress);
-        home_progress_circular1 = view.findViewById(R.id.home_progress_circular1);
-        home_so_luong_nhom = view.findViewById(R.id.home_task_group);
-        home_btnViewTask = view.findViewById(R.id.home_btnViewTask);
+
+        findId(view);
         dbHelper = new DBHelper(getContext());
+        db = this.dbHelper.getWritableDatabase();
 
-//        dbHelper.insertTask("Thiết kế giao diện","Màn hình: thống kê, thông báo","11/5/2024 00:00:00","31/12/1899 09:00:00","14/5/2024 00:00:00","31/12/1899 16:00:00",0,0,0);
-
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false); // set for inprogress
         rcv_ingrogres.setLayoutManager(linearLayoutManager);
-        List<Task> allListTask = dbHelper.getAllTasks();
-        home_txtInProgress.setText(allListTask.size() + "");
+        List<TaskDetail> allListTask = dbHelper.getAllTasksDetail();
+        List<Task> TaskInprogress = dbHelper.getAllTasksByStatus(2);
         homeAdapter = new HomeInprogressAdapter(allListTask);
         rcv_ingrogres.setAdapter(homeAdapter);
+        home_txtInProgress.setText(TaskInprogress.size() + "");
 
-        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
+        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false); // set for taskgroups
         rcv_task_group.setLayoutManager(linearLayoutManager1);
-        homeTaskGroupAdapter = new HomeTaskGroupAdapter(allListTask);
+        List<Tag> tagList = dbHelper.getAllTags(); // Lấy số lượng nhóm nhiệm vụ
+        homeTaskGroupAdapter = new HomeTaskGroupAdapter(allListTask, tagList, dbHelper, new HomeTaskGroupAdapter.ICickHomeListTag() {
+            @Override
+            public void onItemClick(HomeListTag homeListTag) {
+                goToHomeDeDetailTGFragment(homeListTag);
+            }
+        });
         rcv_task_group.setAdapter(homeTaskGroupAdapter);
-        home_so_luong_nhom.setText(allListTask.size()+"");
+        home_so_luong_nhom.setText(tagList.size() +"");
 
-        home_progress_circular1.setProgress(75);
+        List<Task> tasksDone =dbHelper.getAllTasksByStatus(3);
+        List<TaskDetail> allTasks = dbHelper.getAllTasksDetail();
+        double tyLeCvHoanThanh = ((double) tasksDone.size() / allTasks.size()) * 100;
+        int x = (int) tyLeCvHoanThanh;
+        home_txtProgressCircle1.setText( x+ "%");
+        home_progress_circular1.setProgress(x);
         home_progress_circular1.setMax(100);
 
         home_btnViewTask.setOnClickListener(new View.OnClickListener() {
@@ -89,28 +97,29 @@ public class HomeFragment extends Fragment {
                 Fragment fragment = new ListTaskFragment();
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.fragment_container, fragment).commit();
+                bottomNavigation.show(4, true);
             }
         });
-
-
-
     }
-//    public List<Task> getListHomeInProgress(List<Task> allListHome){
-//        List<Task> list = new ArrayList<>();
-//        for(int i = 0; i < allListHome.size(); i++) {
-//            if(allListHome.get(i).getStatusName() == 0) {
-//                list.add(allListHome.get(i));
-//            }
-//        }
-//        return list;
-//    }
 
-//    private void openFragment(Fragment fragment, int enterAnimation, int exitAnimation) {
-//        if (enterAnimation == -1 || exitAnimation == -1) {
-//            enterAnimation = R.anim.exit_to_left;
-//            exitAnimation = R.anim.enter_from_right;
-//        }
-//        getParentFragment().
-//    }
+    private void findId(View view){
+        rcv_ingrogres = view.findViewById(R.id.rcv_inprogress);
+        rcv_task_group = view.findViewById(R.id.rcv_task_group);
+        home_txtInProgress = view.findViewById(R.id.home_txtInProgress);
+        home_progress_circular1 = view.findViewById(R.id.home_progress_circular1);
+        home_so_luong_nhom = view.findViewById(R.id.home_task_group);
+        home_btnViewTask = view.findViewById(R.id.home_btnViewTask);
+        home_txtProgressCircle1 = view.findViewById(R.id.home_txtProgressCircle1);
+    }
+
+    private void goToHomeDeDetailTGFragment(HomeListTag homeListTag){
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+
+        HomeDetailTGFragment homeDetailTGFragment = new HomeDetailTGFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("object_hometaglist",homeListTag);
+        homeDetailTGFragment.setArguments(bundle);
+        fragmentTransaction.replace(R.id.fragment_container, homeDetailTGFragment).commit();
+    }
 
 }

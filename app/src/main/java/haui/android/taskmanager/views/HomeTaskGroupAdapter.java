@@ -1,5 +1,6 @@
-package haui.android.taskmanager.models;
+package haui.android.taskmanager.views;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +16,23 @@ import java.util.List;
 
 import haui.android.taskmanager.R;
 import haui.android.taskmanager.controller.DBHelper;
+import haui.android.taskmanager.models.HomeListTag;
+import haui.android.taskmanager.models.Tag;
+import haui.android.taskmanager.models.TaskDetail;
 
 public class HomeTaskGroupAdapter  extends RecyclerView.Adapter<HomeTaskGroupAdapter.HomeTaskGroupAdapterViewHolder>{
 
     private List<TaskDetail> listTask;
     private List<TaskDetail> taskDetails;
     private List<Tag> tagList;
-    private List<HomeListTag> allListTaskDetail = new ArrayList<HomeListTag>();
+    public static List<HomeListTag> allListTaskDetail = new ArrayList<HomeListTag>();
     DBHelper dbHelper1;
-    private void Classify(){
+    public interface ICickHomeListTag {
+        void onItemClick(HomeListTag homeListTag);
+    }
+
+    private ICickHomeListTag listener;
+    public void Classify(List<TaskDetail> listTask){
         for(int i = 0; i < listTask.size(); i++) {
             TaskDetail taskDetail = listTask.get(i);
             for(int k = 0; k < tagList.size(); k++) {
@@ -35,12 +44,12 @@ public class HomeTaskGroupAdapter  extends RecyclerView.Adapter<HomeTaskGroupAda
             }
         }
     }
-
-    public HomeTaskGroupAdapter(List<TaskDetail> listTask, List<Tag> tagList, DBHelper dbHelper) {
+    public HomeTaskGroupAdapter(List<TaskDetail> listTask, List<Tag> tagList, DBHelper dbHelper, ICickHomeListTag listener) {
         this.listTask = listTask;
         this.tagList = tagList;
         dbHelper1 = dbHelper;
-        Classify();
+        this.listener = listener;
+        Classify(listTask);
     }
     @NonNull
     @Override
@@ -49,6 +58,7 @@ public class HomeTaskGroupAdapter  extends RecyclerView.Adapter<HomeTaskGroupAda
         return new HomeTaskGroupAdapterViewHolder(view);
     }
 
+    @SuppressLint("RecyclerView")
     @Override
     public void onBindViewHolder(@NonNull HomeTaskGroupAdapterViewHolder holder, int position) {
         HomeListTag homeListTag1 = allListTaskDetail.get(position); // Đây là một danh sánh con trong allListTaskDetail
@@ -94,6 +104,29 @@ public class HomeTaskGroupAdapter  extends RecyclerView.Adapter<HomeTaskGroupAda
         holder.home_progress_circular_task_group.setMax(100);
         holder.home_progress_circular_task_group.setProgress(x);
         holder.home_txt_progress_circular_task_group.setText(x+"%");
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) { // Check if listener is set (if using interface)
+                    listener.onItemClick(allListTaskDetail.get(position));
+                } else {
+                    // Handle item click directly here (without interface)
+                    // You can access the HomeListTag object using allListTaskDetail.get(position)
+                }
+            }
+        });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(homeListTag1);
+            }
+        });
+    }
+
+    public void setOnItemClickListener(ICickHomeListTag listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -101,8 +134,6 @@ public class HomeTaskGroupAdapter  extends RecyclerView.Adapter<HomeTaskGroupAda
         if(listTask != null) return tagList.size();
         return 0;
     }
-
-
     public class HomeTaskGroupAdapterViewHolder extends RecyclerView.ViewHolder{
 
         private ImageView home_custom_tag_group;

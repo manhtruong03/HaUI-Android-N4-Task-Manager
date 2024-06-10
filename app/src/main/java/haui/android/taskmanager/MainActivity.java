@@ -29,24 +29,27 @@ import java.io.InputStream;
 
 
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.FragmentTransaction;
+
 import java.io.File;
 import java.io.FileOutputStream;
 
 import haui.android.taskmanager.controller.ExcelReader;
+import haui.android.taskmanager.models.HomeListTag;
 import haui.android.taskmanager.views.CalendarFragment;
+import haui.android.taskmanager.views.HomeDetailTGFragment;
 import haui.android.taskmanager.views.HomeFragment;
 import haui.android.taskmanager.views.ListTaskFragment;
 import haui.android.taskmanager.views.NotiFragment;
 import haui.android.taskmanager.views.CreateTaskFragment;
 
 public class MainActivity extends AppCompatActivity {
-    private MeowBottomNavigation bottomNavigation;
+    public static MeowBottomNavigation bottomNavigation;
     private LinearLayout subMenuContainer;
 
     private static final int REQUEST_CODE_PERMISSIONS = 100;
     private static final String TAG = "MainActivity";
     private ActivityResultLauncher<Intent> filePickerLauncher;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

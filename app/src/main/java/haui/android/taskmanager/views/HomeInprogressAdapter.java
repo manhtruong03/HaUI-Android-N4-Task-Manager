@@ -1,4 +1,4 @@
-package haui.android.taskmanager.models;
+package haui.android.taskmanager.views;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import haui.android.taskmanager.R;
+import haui.android.taskmanager.models.TaskDetail;
 
 public class HomeInprogressAdapter extends RecyclerView.Adapter<HomeInprogressAdapter.HomeViewHolder> {
     private List<TaskDetail> mListTask;
