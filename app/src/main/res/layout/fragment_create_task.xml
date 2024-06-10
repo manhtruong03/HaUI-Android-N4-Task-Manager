@@ -14,6 +14,15 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thêm Công Việc"
+            android:textStyle="bold"
+            android:textSize="25dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"/>
+
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,6 +47,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <ImageView
+                android:id="@+id/addTag"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginRight="16dp"
@@ -55,10 +65,11 @@
             app:startIconDrawable="@drawable/create_task_ic_task">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/taskName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                android:paddingStart="40dp"/>
+                android:paddingStart="40dp" />
 
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -74,6 +85,7 @@
             android:hint="@string/description">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/task_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="top"
@@ -188,7 +200,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/btnAddTask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
