@@ -93,7 +93,7 @@ public class CalendarFragment extends Fragment {
                 displayTasks(tasks);
             }
         });
-
+        
         return view;
         // return inflater.inflate(R.layout.fragment_calendar, container, false);
     }
@@ -104,5 +104,6 @@ public class CalendarFragment extends Fragment {
         }
         arrayAdapter = new TaskViewAdapter(getActivity(), tasks);
         calender_ListView.setAdapter(arrayAdapter);
+
     }
 }
