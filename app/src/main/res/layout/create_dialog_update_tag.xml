@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="20dp"
-        android:text="Thêm Nhãn Công Việc"
+        android:text="Sửa Nhãn Công Việc"
         android:textSize="25dp"
         android:textStyle="bold" />
 
@@ -23,7 +23,7 @@
         android:hint="@string/name">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextNewTag"
+            android:id="@+id/editTextTag"
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:inputType="text"
@@ -214,10 +214,10 @@
 
 
     <Button
-        android:id="@+id/btnAddTag"
+        android:id="@+id/btnEditTag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
-        android:text="Thêm" />
+        android:text="Sửa" />
 
 </LinearLayout>

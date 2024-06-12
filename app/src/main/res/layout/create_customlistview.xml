@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/colorTag"
+            android:layout_width="50sp"
+            android:layout_height="30dp"
+            android:background="#FFCC33"
+            android:layout_margin="10dp">
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/txtTagName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Công Việc"
+            android:layout_gravity="center"/>
+    </TableRow>
+
+</LinearLayout>

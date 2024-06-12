@@ -286,10 +286,9 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.update(TABLE_TAG_NAME, values, COLUMN_TAG_ID + " = ?", new String[]{String.valueOf(tag.getTagID())});
     }
 
-    public void deleteTag(int tagID) {
+    public int deleteTag(int tagID) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_TAG_NAME, COLUMN_TAG_ID + " = ?", new String[]{String.valueOf(tagID)});
-        db.close();
+        return db.delete(TABLE_TAG_NAME, COLUMN_TAG_ID + " = ?", new String[]{String.valueOf(tagID)});
     }
 
     public List<Task> getAllTasks() {
@@ -619,4 +618,5 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
         return rowsAffected > 0;
     }
+
 }
