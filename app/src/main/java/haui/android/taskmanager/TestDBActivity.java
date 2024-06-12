@@ -23,7 +23,17 @@ public class TestDBActivity extends AppCompatActivity {
 
         dbHelper = new DBHelper(this);
 
-        testDBOperations();
+        dbHelper.insertTask("Hoàn thành bài tâp", "...", "12/02/2024", "08:00", "14/02/2024", "08:00", 1, 1, 1);
+        dbHelper.insertTask("Sửa lỗi bài tập", "...", "29/05/2024", "08:00", "18/06/2024", "08:00", 2, 2, 2);
+        dbHelper.insertTask("Hoàn thành bài tâp", "...", "12/02/2024", "08:00", "14/02/2024", "08:00", 3, 3, 3);
+        dbHelper.insertTask("Hoàn thành bài tâp", "...", "12/02/2024", "08:00", "14/02/2024", "08:00", 1, 4, 4);
+        dbHelper.insertTask("Hoàn thành bài tâp", "...", "12/02/2024", "08:00", "14/02/2024", "08:00", 2, 1, 5);
+        dbHelper.insertTask("Hoàn thành bài tâp", "...", "12/02/2024", "08:00", "14/02/2024", "08:00", 3, 2, 1);
+        dbHelper.insertTask("Hoàn thành bài tâp", "...", "12/02/2024", "08:00", "14/02/2024", "08:00", 1, 3, 2);
+        dbHelper.insertTask("Hoàn thành bài tâp", "...", "12/02/2024", "08:00", "14/02/2024", "08:00", 1, 4, 3);
+        dbHelper.insertTask("Hoàn thành bài tâp", "...", "12/02/2024", "08:00", "14/02/2024", "08:00", 1, 1, 4);
+        dbHelper.insertTask("Hoàn thành bài tâp", "...", "12/02/2024", "08:00", "14/02/2024", "08:00", 1, 2, 5);
+//        testDBOperations();
     }
 
     private void testDBOperations() {
