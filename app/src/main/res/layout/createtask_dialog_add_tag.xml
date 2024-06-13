@@ -30,7 +30,6 @@
             android:paddingStart="20dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -56,12 +55,12 @@
             <RelativeLayout
                 android:layout_width="53dp"
                 android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
                 android:layout_margin="10dp"
                 android:background="#EE0000"
                 android:clickable="false"
                 android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:layout_gravity="center_vertical" />
+                android:focusableInTouchMode="false" />
         </LinearLayout>
 
         <!-- Second RadioButton with RelativeLayout -->
@@ -80,12 +79,12 @@
             <RelativeLayout
                 android:layout_width="50sp"
                 android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
                 android:layout_margin="10dp"
                 android:background="#FFCC33"
                 android:clickable="false"
                 android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:layout_gravity="center_vertical" />
+                android:focusableInTouchMode="false" />
         </LinearLayout>
 
         <!-- Third RadioButton with RelativeLayout -->
@@ -104,12 +103,12 @@
             <RelativeLayout
                 android:layout_width="50sp"
                 android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
                 android:layout_margin="10dp"
                 android:background="#00CC33"
                 android:clickable="false"
                 android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:layout_gravity="center_vertical" />
+                android:focusableInTouchMode="false" />
         </LinearLayout>
 
         <!-- Row 2 -->
@@ -129,12 +128,12 @@
             <RelativeLayout
                 android:layout_width="50sp"
                 android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
                 android:layout_margin="10dp"
                 android:background="#00CCFF"
                 android:clickable="false"
                 android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:layout_gravity="center_vertical" />
+                android:focusableInTouchMode="false" />
         </LinearLayout>
 
         <!-- Fifth RadioButton with RelativeLayout -->
@@ -153,12 +152,12 @@
             <RelativeLayout
                 android:layout_width="50sp"
                 android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
                 android:layout_margin="10dp"
                 android:background="#4169E1"
                 android:clickable="false"
                 android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:layout_gravity="center_vertical" />
+                android:focusableInTouchMode="false" />
         </LinearLayout>
 
         <!-- Sixth RadioButton with RelativeLayout -->
@@ -177,12 +176,12 @@
             <RelativeLayout
                 android:layout_width="51dp"
                 android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
                 android:layout_margin="10dp"
                 android:background="#FF6699"
                 android:clickable="false"
                 android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:layout_gravity="center_vertical" />
+                android:focusableInTouchMode="false" />
         </LinearLayout>
 
         <!-- Row 3 -->
@@ -202,16 +201,15 @@
             <RelativeLayout
                 android:layout_width="50sp"
                 android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
                 android:layout_margin="10dp"
                 android:background="#A9A9A9"
                 android:clickable="false"
                 android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:layout_gravity="center_vertical" />
+                android:focusableInTouchMode="false" />
         </LinearLayout>
 
     </GridLayout>
-
 
     <Button
         android:id="@+id/btnAddTag"

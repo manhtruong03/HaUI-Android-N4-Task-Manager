@@ -1,7 +1,5 @@
 package haui.android.taskmanager.views;
 
-import static android.content.ContentValues.TAG;
-
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -13,14 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-
 import androidx.fragment.app.Fragment;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import com.google.android.material.textfield.TextInputEditText;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,14 +25,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
 import android.app.AlertDialog;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RadioButton;
-import android.widget.Toast;
-
 import haui.android.taskmanager.R;
 import haui.android.taskmanager.controller.DBHelper;
 import haui.android.taskmanager.models.Tag;
@@ -50,7 +42,7 @@ public class CreateTaskFragment extends Fragment {
     ImageView editTag;
     DBHelper db;
 
-    int vitri;
+    int vitri = -1, tagid = -1;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -61,8 +53,6 @@ public class CreateTaskFragment extends Fragment {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        vitri = -1;
 
         spinner = view.findViewById(R.id.spinner);
         datestart = view.findViewById(R.id.datestart);
@@ -89,14 +79,20 @@ public class CreateTaskFragment extends Fragment {
         adapterTag.notifyDataSetChanged();
 
         spinner.setOnItemClickListener((parent, view1, position, id) -> {
-            Tag selectedTag = adapterTag.getItem(position);
-            if (selectedTag != null) {
-                String selectedTagName = selectedTag.getTagName();
-                spinner.setText(selectedTagName, false); // false to prevent showing dropdown again
+            try {
+                Tag selectedTag = adapterTag.getItem(position);
+                if (selectedTag != null) {
+                    String selectedTagName = selectedTag.getTagName();
+                    spinner.setText(selectedTagName, false); // false để ngăn chặn việc hiển thị menu thả xuống một lần nữa
+                    tagid = selectedTag.getTagID();
+                    Log.d("TAG", "tag id" + tagid);
+                }
+                vitri = position;
+            } catch (Exception e) {
+                e.printStackTrace();
+                showAlert("Có lỗi xảy ra khi chọn nhãn từ Spinner: " + e.getMessage());
             }
-            vitri = position;
         });
-
 
         // Thiết lập sự kiện chọn ngày và giờ
         datestart.setOnClickListener(v -> chooseDate(datestart));
@@ -122,7 +118,6 @@ public class CreateTaskFragment extends Fragment {
             }
         });
         return view;
-
     }
 
     private void disableKeyboardForEditText(TextInputEditText editText) {
@@ -164,12 +159,10 @@ public class CreateTaskFragment extends Fragment {
         String startTime = timestart.getText().toString().trim();
         String endDate = dateend.getText().toString().trim();
         String endTime = timeend.getText().toString().trim();
-        Integer selectedTagId = adapterTag.getItem(vitri).getTagID();// Lấy tagId từ giá trị được chọn trong spinner
-
-        //Integer selectedTagId = 0;
+        Integer selectedTagId = tagid;// Lấy tagId từ giá trị được chọn trong spinner
 
         // Kiểm tra nếu các trường bắt buộc không được điền đầy đủ
-        if (name.isEmpty() || description.isEmpty() || startDate.isEmpty() || startTime.isEmpty() || endDate.isEmpty() || endTime.isEmpty() || selectedTagId.toString().isEmpty()) {
+        if (name.isEmpty() || description.isEmpty() || startDate.isEmpty() || startTime.isEmpty() || endDate.isEmpty() || endTime.isEmpty() || selectedTagId == -1) {
             showAlert("Vui lòng điền đầy đủ thông tin!");
             return;
         }
@@ -197,17 +190,18 @@ public class CreateTaskFragment extends Fragment {
         // Tạo task mới với dữ liệu đã nhập và giá trị từ spinner
         int priority = 1;
         int statusId = 1;
-        int tagId = selectedTagId;
 
-        long taskId = db.insertTask(name, description, startDate, startTime, endDate, endTime, priority, statusId, tagId);
+        long taskId = db.insertTask(name, description, startDate, startTime, endDate, endTime, priority, statusId, selectedTagId);
 
         if (taskId != -1) {
             // Nếu thêm thành công, hiển thị thông báo thành công
-            Toast.makeText(getContext(), "Thêm task thành công.", Toast.LENGTH_SHORT).show();
+            showAlert("Thêm task thành công.");
         } else {
             // Nếu thêm không thành công, hiển thị thông báo lỗi
             showAlert("Có lỗi xảy ra khi thêm task.");
         }
+        clearInput();
+        Log.d("TAG", "tag id them" + tagid);
     }
 
     private void clearInput() {
@@ -219,6 +213,7 @@ public class CreateTaskFragment extends Fragment {
         timeend.setText("");
         spinner.setText("");
         vitri = -1;
+        tagid = -1;
     }
 
     private void showAlert(String message) {
@@ -229,26 +224,18 @@ public class CreateTaskFragment extends Fragment {
                 .show();
     }
 
-    // Method to refresh spinner data
-    private void refreshSpinner() {
-        List<Tag> arrTag = db.getAllTags();
-        Set<Tag> uniqueTags = new HashSet<>(arrTag);
-        List<Tag> tagList = new ArrayList<>(uniqueTags);
-        adapterTag.clear();
-        adapterTag.addAll(tagList);
-        adapterTag.notifyDataSetChanged();
-    }
-
     private void ShowMenu() {
-
-        Tag selectedTag = adapterTag.getItem(vitri);
-
         PopupMenu popupMenu = new PopupMenu(getContext(), editTag);
         popupMenu.getMenuInflater().inflate(R.menu.createtask_menu_tag, popupMenu.getMenu());
 
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                Tag selectedTag = null;
+                if (vitri != -1) {
+                    selectedTag = adapterTag.getItem(vitri);
+                }
+
                 if (item.getItemId() == R.id.action_add_tag) {
                     addTag();
                     return true;
@@ -284,7 +271,9 @@ public class CreateTaskFragment extends Fragment {
 
         EditText editTextNewTag = dialogView.findViewById(R.id.editTextNewTag);
         Button buttonAddTag = dialogView.findViewById(R.id.btnAddTag);
-        // Initialize RadioButtons
+
+        // Khởi tạo RadioButtons
+        List<RadioButton> radioButtons = new ArrayList<>();
         RadioButton radioButtonColor1 = dialogView.findViewById(R.id.radioButtonColor1);
         RadioButton radioButtonColor2 = dialogView.findViewById(R.id.radioButtonColor2);
         RadioButton radioButtonColor3 = dialogView.findViewById(R.id.radioButtonColor3);
@@ -292,6 +281,25 @@ public class CreateTaskFragment extends Fragment {
         RadioButton radioButtonColor5 = dialogView.findViewById(R.id.radioButtonColor5);
         RadioButton radioButtonColor6 = dialogView.findViewById(R.id.radioButtonColor6);
         RadioButton radioButtonColor7 = dialogView.findViewById(R.id.radioButtonColor7);
+        radioButtons.add(radioButtonColor1);
+        radioButtons.add(radioButtonColor2);
+        radioButtons.add(radioButtonColor3);
+        radioButtons.add(radioButtonColor4);
+        radioButtons.add(radioButtonColor5);
+        radioButtons.add(radioButtonColor6);
+        radioButtons.add(radioButtonColor7);
+
+        // Set checked cho 1 spinner nào được chọn
+        for (RadioButton radioButton : radioButtons) {
+            radioButton.setOnClickListener(view -> {
+                // Uncheck all RadioButtons
+                for (RadioButton rb : radioButtons) {
+                    rb.setChecked(false);
+                }
+                // Check the clicked RadioButton
+                radioButton.setChecked(true);
+            });
+        }
 
         AlertDialog dialog = builder.create();
 
@@ -299,38 +307,28 @@ public class CreateTaskFragment extends Fragment {
             String newTag = editTextNewTag.getText().toString().trim();
             String selectedColor = null;
 
-            // Check which RadioButton is selected
-            if (radioButtonColor1.isChecked()) {
-                selectedColor = (String) radioButtonColor1.getTag();
-            } else if (radioButtonColor2.isChecked()) {
-                selectedColor = (String) radioButtonColor2.getTag();
-            } else if (radioButtonColor3.isChecked()) {
-                selectedColor = (String) radioButtonColor3.getTag();
-            } else if (radioButtonColor4.isChecked()) {
-                selectedColor = (String) radioButtonColor4.getTag();
-            } else if (radioButtonColor5.isChecked()) {
-                selectedColor = (String) radioButtonColor5.getTag();
-            } else if (radioButtonColor6.isChecked()) {
-                selectedColor = (String) radioButtonColor6.getTag();
-            } else if (radioButtonColor7.isChecked()) {
-                selectedColor = (String) radioButtonColor7.getTag();
+            // Kiểm tra xem RadioButton nào được chọn
+            for (RadioButton radioButton : radioButtons) {
+                if (radioButton.isChecked()) {
+                    selectedColor = (String) radioButton.getTag();
+                    break;
+                }
             }
 
-            if (newTag.isEmpty() || selectedColor.isEmpty()) {
+            if (newTag.isEmpty() || selectedColor == null) {
                 showAlert("Vui lòng điền đầy đủ thông tin!");
                 return;
             } else {
                 Tag tag = new Tag();
                 tag.setTagName(newTag);
-                tag.setTagColor(selectedColor); // Assuming Tag class has a setColor method
-                // Save tag to the database
+                tag.setTagColor(selectedColor);
+                // Lưu tag vào db
                 long result = db.addTag(tag);
                 if (result != -1) {
-                    // Successfully added, refresh the spinner
                     refreshSpinner();
-                    Toast.makeText(getContext(), "Thêm nhãn thành công", Toast.LENGTH_SHORT).show();
+                    showAlert("Thêm nhãn thành công");
                 } else {
-                    Toast.makeText(getContext(), "Có lỗi xảy ra khi thêm nhãn", Toast.LENGTH_SHORT).show();
+                    showAlert("Có lỗi xảy ra khi thêm nhãn");
                 }
             }
             // Close the dialog
@@ -339,7 +337,7 @@ public class CreateTaskFragment extends Fragment {
         dialog.show();
     }
 
-    // Phương thức xử lý sự kiện sửa Tag
+    // Update Tag
     private void editTag(Tag tag) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
@@ -349,7 +347,8 @@ public class CreateTaskFragment extends Fragment {
         EditText editTextTag = dialogView.findViewById(R.id.editTextTag);
         Button buttonEditTag = dialogView.findViewById(R.id.btnEditTag);
 
-        // Initialize RadioButtons
+        // Khởi tạo RadioButtons
+        List<RadioButton> radioButtons = new ArrayList<>();
         RadioButton radioButtonColor1 = dialogView.findViewById(R.id.radioButtonColor1);
         RadioButton radioButtonColor2 = dialogView.findViewById(R.id.radioButtonColor2);
         RadioButton radioButtonColor3 = dialogView.findViewById(R.id.radioButtonColor3);
@@ -357,25 +356,35 @@ public class CreateTaskFragment extends Fragment {
         RadioButton radioButtonColor5 = dialogView.findViewById(R.id.radioButtonColor5);
         RadioButton radioButtonColor6 = dialogView.findViewById(R.id.radioButtonColor6);
         RadioButton radioButtonColor7 = dialogView.findViewById(R.id.radioButtonColor7);
+        radioButtons.add(radioButtonColor1);
+        radioButtons.add(radioButtonColor2);
+        radioButtons.add(radioButtonColor3);
+        radioButtons.add(radioButtonColor4);
+        radioButtons.add(radioButtonColor5);
+        radioButtons.add(radioButtonColor6);
+        radioButtons.add(radioButtonColor7);
 
-        editTextTag.setText(tag.getTagName()); // Set current tag name
+        editTextTag.setText(tag.getTagName()); // Set tagname hiện tại
 
-        // Set current color selection
+        // Set tagcolor hiện tại
         String currentColor = tag.getTagColor();
-        if (currentColor.equals(radioButtonColor1.getTag())) {
-            radioButtonColor1.setChecked(true);
-        } else if (currentColor.equals(radioButtonColor2.getTag())) {
-            radioButtonColor2.setChecked(true);
-        } else if (currentColor.equals(radioButtonColor3.getTag())) {
-            radioButtonColor3.setChecked(true);
-        } else if (currentColor.equals(radioButtonColor4.getTag())) {
-            radioButtonColor4.setChecked(true);
-        } else if (currentColor.equals(radioButtonColor5.getTag())) {
-            radioButtonColor5.setChecked(true);
-        } else if (currentColor.equals(radioButtonColor6.getTag())) {
-            radioButtonColor6.setChecked(true);
-        } else if (currentColor.equals(radioButtonColor7.getTag())) {
-            radioButtonColor7.setChecked(true);
+        for (RadioButton radioButton : radioButtons) {
+            if (currentColor.equals(radioButton.getTag())) {
+                radioButton.setChecked(true);
+                break;
+            }
+        }
+
+        // Set checked cho 1 spinner nào được chọn
+        for (RadioButton radioButton : radioButtons) {
+            radioButton.setOnClickListener(view -> {
+                // Uncheck all RadioButtons
+                for (RadioButton rb : radioButtons) {
+                    rb.setChecked(false);
+                }
+                // Check the clicked RadioButton
+                radioButton.setChecked(true);
+            });
         }
 
         AlertDialog dialog = builder.create();
@@ -384,23 +393,15 @@ public class CreateTaskFragment extends Fragment {
             String newTag = editTextTag.getText().toString().trim();
             String selectedColor = null;
 
-            if (radioButtonColor1.isChecked()) {
-                selectedColor = (String) radioButtonColor1.getTag();
-            } else if (radioButtonColor2.isChecked()) {
-                selectedColor = (String) radioButtonColor2.getTag();
-            } else if (radioButtonColor3.isChecked()) {
-                selectedColor = (String) radioButtonColor3.getTag();
-            } else if (radioButtonColor4.isChecked()) {
-                selectedColor = (String) radioButtonColor4.getTag();
-            } else if (radioButtonColor5.isChecked()) {
-                selectedColor = (String) radioButtonColor5.getTag();
-            } else if (radioButtonColor6.isChecked()) {
-                selectedColor = (String) radioButtonColor6.getTag();
-            } else if (radioButtonColor7.isChecked()) {
-                selectedColor = (String) radioButtonColor7.getTag();
+            // Check which RadioButton is selected
+            for (RadioButton radioButton : radioButtons) {
+                if (radioButton.isChecked()) {
+                    selectedColor = (String) radioButton.getTag();
+                    break;
+                }
             }
 
-            if (newTag.isEmpty() || selectedColor.isEmpty()) {
+            if (newTag.isEmpty() || selectedColor == null) {
                 showAlert("Vui lòng điền đầy đủ thông tin!");
                 return;
             } else {
@@ -410,9 +411,10 @@ public class CreateTaskFragment extends Fragment {
                 int result = db.updateTag(tag); // Assuming you have an updateTag method in your DBHelper class
                 if (result > 0) {
                     refreshSpinner();
-                    Toast.makeText(getContext(), "Sửa nhãn thành công", Toast.LENGTH_SHORT).show();
+                    showAlert("Sửa nhãn thành công");
+                    spinner.setText("");
                 } else {
-                    Toast.makeText(getContext(), "Có lỗi xảy ra khi sửa nhãn", Toast.LENGTH_SHORT).show();
+                    showAlert("Có lỗi xảy ra khi sửa nhãn");
                 }
             }
             dialog.dismiss();
@@ -421,7 +423,7 @@ public class CreateTaskFragment extends Fragment {
         dialog.show();
     }
 
-    // Phương thức xử lý sự kiện xóa Tag
+    // Delete Tag
     private void deleteTag(Tag tag) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Xóa nhãn");
@@ -432,6 +434,7 @@ public class CreateTaskFragment extends Fragment {
             if (result > 0) {
                 refreshSpinner();
                 showAlert("Xóa nhãn thành công");
+                spinner.setText("");
             } else {
                 showAlert("Có lỗi xảy ra khi xóa nhãn");
             }
@@ -441,5 +444,24 @@ public class CreateTaskFragment extends Fragment {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    // Method to refresh spinner data
+    private void refreshSpinner() {
+        try {
+            List<Tag> arrTag = db.getAllTags();
+            Set<Tag> uniqueTags = new HashSet<>(arrTag);
+            List<Tag> tagList = new ArrayList<>(uniqueTags);
+            adapterTag.clear();
+            adapterTag.addAll(tagList);
+            spinner.setAdapter(adapterTag);
+            adapterTag.notifyDataSetChanged();
+            tagid = -1;
+            vitri = -1;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Có lỗi xảy ra khi làm mới danh sách nhãn");
+        }
     }
 }
