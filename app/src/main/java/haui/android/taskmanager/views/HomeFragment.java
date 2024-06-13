@@ -9,23 +9,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
-
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import haui.android.taskmanager.MainActivity;
 import haui.android.taskmanager.R;
 import haui.android.taskmanager.controller.DBHelper;
 import haui.android.taskmanager.models.HomeListTag;
@@ -38,26 +36,19 @@ public class HomeFragment extends Fragment{
     RecyclerView rcv_ingrogres, rcv_task_group;
     ProgressBar home_progress_circular1;
     HomeInprogressAdapter homeAdapter;
+
+    TextView test;
     HomeTaskGroupAdapter homeTaskGroupAdapter;
     TextView home_txtInProgress, home_so_luong_nhom, home_txtProgressCircle1;
     SQLiteDatabase db;
     Button home_btnViewTask;
+    List<Tag> tagList;
+    private List<HomeListTag> allListTaskDetail = new ArrayList<HomeListTag>();
+    private View view;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_home, container, false);
-    }
-
-    @SuppressLint("SetTextI18n")
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // Enabling Edge-to-Edge
-        if (getActivity() != null) {
-            EdgeToEdge.enable(getActivity());
-        }
-
+        view = inflater.inflate(R.layout.fragment_home, container, false);
         findId(view);
         dbHelper = new DBHelper(getContext());
         db = this.dbHelper.getWritableDatabase();
@@ -68,25 +59,36 @@ public class HomeFragment extends Fragment{
         List<Task> TaskInprogress = dbHelper.getAllTasksByStatus(2);
         homeAdapter = new HomeInprogressAdapter(allListTask);
         rcv_ingrogres.setAdapter(homeAdapter);
+        homeAdapter.notifyDataSetChanged();
         home_txtInProgress.setText(TaskInprogress.size() + "");
 
         LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false); // set for taskgroups
         rcv_task_group.setLayoutManager(linearLayoutManager1);
-        List<Tag> tagList = dbHelper.getAllTags(); // Lấy số lượng nhóm nhiệm vụ
-        homeTaskGroupAdapter = new HomeTaskGroupAdapter(allListTask, tagList, dbHelper, new HomeTaskGroupAdapter.ICickHomeListTag() {
+        tagList = dbHelper.getAllTags(); // Lấy số lượng nhóm nhiệm vụ
+//        for(int i = 0; i < tagList.size(); i++) {
+//            if(allListTaskDetail.get(i).getTaskDetailList().size() != 0){
+//                dbHelper.deleteTag(allListTaskDetail.get(i).getTaskDetailList().get(0).getTag().getTagID());
+////                dbHelper.deleteTask(allListTaskDetail.get(i).getTaskDetailList().get(0).getTask().getTaskID());
+////                dbHelper.deleteTask(allListTaskDetail.get(i).getTaskDetailList().get(0).getStatus().getStatusID());
+//            }
+//        }
+
+        allListTaskDetail = Classify(allListTask);
+        home_so_luong_nhom.setText(countUniqueTagColors(allListTaskDetail) +"");
+        homeTaskGroupAdapter = new HomeTaskGroupAdapter(allListTask, countUniqueTagColors(allListTaskDetail), allListTaskDetail, new HomeTaskGroupAdapter.ICickHomeListTag() {
             @Override
             public void onItemClick(HomeListTag homeListTag) {
                 goToHomeDeDetailTGFragment(homeListTag);
             }
         });
         rcv_task_group.setAdapter(homeTaskGroupAdapter);
-        home_so_luong_nhom.setText(tagList.size() +"");
+        homeTaskGroupAdapter.notifyDataSetChanged();
 
         List<Task> tasksDone =dbHelper.getAllTasksByStatus(3);
         List<TaskDetail> allTasks = dbHelper.getAllTasksDetail();
         double tyLeCvHoanThanh = ((double) tasksDone.size() / allTasks.size()) * 100;
         int x = (int) tyLeCvHoanThanh;
-        home_txtProgressCircle1.setText( x+ "%");
+        home_txtProgressCircle1.setText(x+ "%");
         home_progress_circular1.setProgress(x);
         home_progress_circular1.setMax(100);
 
@@ -99,6 +101,18 @@ public class HomeFragment extends Fragment{
                 bottomNavigation.show(4, true);
             }
         });
+        return view;
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Enabling Edge-to-Edge
+        if (getActivity() != null) {
+            EdgeToEdge.enable(getActivity());
+        }
     }
 
     private void findId(View view){
@@ -121,4 +135,40 @@ public class HomeFragment extends Fragment{
         fragmentTransaction.replace(R.id.fragment_container, homeDetailTGFragment).commit();
     }
 
+    public List<HomeListTag> Classify(List<TaskDetail> listTask){
+        List<HomeListTag> allListTaskDetail1 = new ArrayList<HomeListTag>();
+        List<TaskDetail> taskDetails;
+        db = this.dbHelper.getWritableDatabase();
+        for(int i = 0; i < listTask.size(); i++) {
+            TaskDetail taskDetail = listTask.get(i);
+            for(int k = 0; k < tagList.size(); k++) {
+                if(tagList.get(k).getTagID() == taskDetail.getTask().getTagID()) {
+                    taskDetails = dbHelper.getAllTaskDetailByTagId(tagList.get(k).getTagID());
+                    HomeListTag homeListTag = new HomeListTag(taskDetail.getTask().getTagID(), taskDetails);
+//                    HomeListTag homeListTag = dbHelper1.getHomeListTag(tagList.get(k).getTagID());
+                    allListTaskDetail1.add(homeListTag);
+                }
+            }
+        }
+        return allListTaskDetail1;
+    }
+
+    public int countUniqueTagColors(List<HomeListTag> allListTaskDetail) {
+        Set<String> uniqueTagColors = new HashSet<>();
+
+        // Loop through each HomeListTag
+        for (HomeListTag homeListTag : allListTaskDetail) {
+            // Loop through each TaskDetail within the HomeListTag
+            for (TaskDetail taskDetail : homeListTag.getTaskDetailList()) {
+                // Check if the tag color exists in the set
+                if (taskDetail.getTag() != null && !uniqueTagColors.contains(taskDetail.getTag().getTagColor())) {
+                    // If not found, add it to the set
+                    uniqueTagColors.add(taskDetail.getTag().getTagColor());
+                }
+            }
+        }
+
+        // Return the size of the set which represents the number of unique colors
+        return uniqueTagColors.size();
+    }
 }

@@ -1,6 +1,8 @@
 package haui.android.taskmanager.views;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,31 +27,36 @@ public class HomeTaskGroupAdapter  extends RecyclerView.Adapter<HomeTaskGroupAda
     private List<TaskDetail> listTask;
     private List<TaskDetail> taskDetails;
     private List<Tag> tagList;
-    public static List<HomeListTag> allListTaskDetail = new ArrayList<HomeListTag>();
+    private int amountTag;
+    private List<HomeListTag> allListTaskDetail;
     DBHelper dbHelper1;
+    SQLiteDatabase db;
+    Context context;
     public interface ICickHomeListTag {
         void onItemClick(HomeListTag homeListTag);
     }
 
     private ICickHomeListTag listener;
-    public void Classify(List<TaskDetail> listTask){
-        for(int i = 0; i < listTask.size(); i++) {
-            TaskDetail taskDetail = listTask.get(i);
-            for(int k = 0; k < tagList.size(); k++) {
-                if(tagList.get(k).getTagID() == taskDetail.getTask().getTagID()) {
-                    taskDetails = dbHelper1.getAllTaskDetailByTagId(tagList.get(k).getTagID());
-                    HomeListTag homeListTag = new HomeListTag(tagList.get(k).getTagID(), taskDetails);
-                    allListTaskDetail.add(homeListTag);
-                }
-            }
-        }
-    }
-    public HomeTaskGroupAdapter(List<TaskDetail> listTask, List<Tag> tagList, DBHelper dbHelper, ICickHomeListTag listener) {
+//    public List<HomeListTag> Classify(List<TaskDetail> listTask){
+//        db = this.dbHelper1.getWritableDatabase();
+//        for(int i = 0; i < listTask.size(); i++) {
+//            TaskDetail taskDetail = listTask.get(i);
+//            for(int k = 0; k < tagList.size(); k++) {
+//                if(tagList.get(k).getTagID() == taskDetail.getTask().getTagID()) {
+//                    taskDetails = dbHelper1.getAllTaskDetailByTagId(tagList.get(k).getTagID());
+//                    HomeListTag homeListTag = new HomeListTag(tagList.get(k).getTagID(), taskDetails);
+////                    HomeListTag homeListTag = dbHelper1.getHomeListTag(tagList.get(k).getTagID());
+//                    allListTaskDetail.add(homeListTag);
+//                }
+//            }
+//        }
+//        return allListTaskDetail;
+//    }
+    public HomeTaskGroupAdapter(List<TaskDetail> listTask, int amountTag, List<HomeListTag> allListTaskDetail, ICickHomeListTag listener) {
         this.listTask = listTask;
-        this.tagList = tagList;
-        dbHelper1 = dbHelper;
+        this.amountTag = amountTag;
         this.listener = listener;
-        Classify(listTask);
+        this.allListTaskDetail = allListTaskDetail;
     }
     @NonNull
     @Override
@@ -105,17 +112,17 @@ public class HomeTaskGroupAdapter  extends RecyclerView.Adapter<HomeTaskGroupAda
         holder.home_progress_circular_task_group.setProgress(x);
         holder.home_txt_progress_circular_task_group.setText(x+"%");
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) { // Check if listener is set (if using interface)
-                    listener.onItemClick(allListTaskDetail.get(position));
-                } else {
-                    // Handle item click directly here (without interface)
-                    // You can access the HomeListTag object using allListTaskDetail.get(position)
-                }
-            }
-        });
+//        holder.itemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (listener != null) { // Check if listener is set (if using interface)
+//                    listener.onItemClick(allListTaskDetail.get(position));
+//                } else {
+//                    // Handle item click directly here (without interface)
+//                    // You can access the HomeListTag object using allListTaskDetail.get(position)
+//                }
+//            }
+//        });
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,7 +138,7 @@ public class HomeTaskGroupAdapter  extends RecyclerView.Adapter<HomeTaskGroupAda
 
     @Override
     public int getItemCount() {
-        if(listTask != null) return tagList.size();
+        if(listTask != null) return amountTag;
         return 0;
     }
     public class HomeTaskGroupAdapterViewHolder extends RecyclerView.ViewHolder{
