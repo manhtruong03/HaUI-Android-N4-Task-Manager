@@ -53,6 +53,7 @@ public class HomeFragment extends Fragment{
         dbHelper = new DBHelper(getContext());
         db = this.dbHelper.getWritableDatabase();
 
+        // khởi
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false); // set for inprogress
         rcv_ingrogres.setLayoutManager(linearLayoutManager);
         List<TaskDetail> allListTask = dbHelper.getAllTasksDetail();
@@ -65,14 +66,6 @@ public class HomeFragment extends Fragment{
         LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false); // set for taskgroups
         rcv_task_group.setLayoutManager(linearLayoutManager1);
         tagList = dbHelper.getAllTags(); // Lấy số lượng nhóm nhiệm vụ
-//        for(int i = 0; i < tagList.size(); i++) {
-//            if(allListTaskDetail.get(i).getTaskDetailList().size() != 0){
-//                dbHelper.deleteTag(allListTaskDetail.get(i).getTaskDetailList().get(0).getTag().getTagID());
-////                dbHelper.deleteTask(allListTaskDetail.get(i).getTaskDetailList().get(0).getTask().getTaskID());
-////                dbHelper.deleteTask(allListTaskDetail.get(i).getTaskDetailList().get(0).getStatus().getStatusID());
-//            }
-//        }
-
         allListTaskDetail = Classify(allListTask);
         home_so_luong_nhom.setText(countUniqueTagColors(allListTaskDetail) +"");
         homeTaskGroupAdapter = new HomeTaskGroupAdapter(allListTask, countUniqueTagColors(allListTaskDetail), allListTaskDetail, new HomeTaskGroupAdapter.ICickHomeListTag() {

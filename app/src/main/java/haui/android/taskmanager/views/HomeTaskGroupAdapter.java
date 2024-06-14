@@ -98,7 +98,7 @@ public class HomeTaskGroupAdapter  extends RecyclerView.Adapter<HomeTaskGroupAda
         }
         holder.home_ten_nhom_cv.setText(homeListTag1.getTaskDetailList().get(0).getTag().getTagName());
         int amountAll = allListTaskDetail.get(position).getTaskDetailList().size();
-        holder.home_so_luong_cv.setText(amountAll+" tasks");
+        holder.home_so_luong_cv.setText(amountAll+" nhiệm vụ");
         List<TaskDetail> doneHomeListTag = new ArrayList<>();
 
         for(int i = 0; i < amountAll; i++) {
