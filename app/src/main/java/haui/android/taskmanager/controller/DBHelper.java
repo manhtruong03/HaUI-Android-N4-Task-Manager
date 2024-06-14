@@ -342,6 +342,32 @@ public class DBHelper extends SQLiteOpenHelper {
         return listTaskDetail;
     }
 
+
+    public TaskDetail getTasksDetailByID(int taskId) {
+        String selectQuery = "SELECT t.*, s.*, g.* "
+                + "FROM " + TABLE_TASK_NAME + " t "
+                + "LEFT JOIN " + TABLE_STATUS_NAME + " s ON t." + COLUMN_TASK_STATUS_ID + " = s." + COLUMN_STATUS_ID + " "
+                + "LEFT JOIN " + TABLE_TAG_NAME + " g ON t." + COLUMN_TASK_TAG_ID + " = g." + COLUMN_TAG_ID + " "
+                + "WHERE t." + COLUMN_TASK_ID + " = ?";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(taskId)});
+
+
+        TaskDetail taskDetail = null;
+        if (cursor.moveToFirst()) {
+            Task task = createTaskFromCursor(cursor);
+            Status status = createStatusFromCursor(cursor);
+            Tag tag = createTagFromCursor(cursor);
+
+            taskDetail = new TaskDetail(task, status, tag);
+        }
+
+        cursor.close();
+        db.close();
+        return taskDetail;
+    }
+
     public List<Task> getTasksByDay(String date) {
         List<Task> tasks = new ArrayList<>();
         String selectQuery = "SELECT t.*, s." + COLUMN_STATUS_NAME + ", g." + COLUMN_TAG_NAME + ", g." + COLUMN_TAG_COLOR + " FROM "
