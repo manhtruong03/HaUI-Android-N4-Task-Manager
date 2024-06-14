@@ -10,6 +10,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import haui.android.taskmanager.R;
 import haui.android.taskmanager.controller.DBHelper;
+import haui.android.taskmanager.models.Tag;
 import haui.android.taskmanager.models.Task;
 
 /**
@@ -109,113 +111,117 @@ public class ListTaskFragment extends Fragment {
         initView(view);
         dbHelper = new DBHelper(getContext());
 
-        taskArrayList.clear();
-        taskArrayList = dbHelper.getAllTasksByStatus(1);
-        taskArrayList.addAll(dbHelper.getAllTasksByStatus(2));
-        arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
+        try {
+            taskArrayList.clear();
+            taskArrayList = dbHelper.getAllTasksByStatus(1);
 
-        listViewTask.setAdapter(arrayAdapter);
+            arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
 
-        btnAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setButtonSelected(btnAll);
-                setButtonUnselected(btnWorking);
-                setButtonUnselected(btnComplete);
-                setButtonUnselected(btnLate);
+            listViewTask.setAdapter(arrayAdapter);
 
-                taskArrayList.clear();
-                taskArrayList = dbHelper.getAllTasksByStatus(1);
-                taskArrayList.addAll(dbHelper.getAllTasksByStatus(2));
-                arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
+            btnAll.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setButtonSelected(btnAll);
+                    setButtonUnselected(btnWorking);
+                    setButtonUnselected(btnComplete);
+                    setButtonUnselected(btnLate);
 
-                listViewTask.setAdapter(arrayAdapter);
-            }
-        });
+                    taskArrayList.clear();
+                    taskArrayList = dbHelper.getAllTasksByStatus(1);
+                    arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
 
-        btnWorking.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setButtonSelected(btnWorking);
-                setButtonUnselected(btnAll);
-                setButtonUnselected(btnComplete);
-                setButtonUnselected(btnLate);
+                    listViewTask.setAdapter(arrayAdapter);
+                }
+            });
 
-                taskArrayList.clear();
-                taskArrayList = dbHelper.getAllTasksByStatus(2);
-                arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
+            btnWorking.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setButtonSelected(btnWorking);
+                    setButtonUnselected(btnAll);
+                    setButtonUnselected(btnComplete);
+                    setButtonUnselected(btnLate);
 
-                listViewTask.setAdapter(arrayAdapter);
-            }
-        });
+                    taskArrayList.clear();
+                    taskArrayList = dbHelper.getAllTasksByStatus(2);
+                    arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
 
-        btnComplete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setButtonSelected(btnComplete);
-                setButtonUnselected(btnWorking);
-                setButtonUnselected(btnAll);
-                setButtonUnselected(btnLate);
+                    listViewTask.setAdapter(arrayAdapter);
+                }
+            });
 
-                taskArrayList.clear();
-                taskArrayList = dbHelper.getAllTasksByStatus(3);
-                arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
+            btnComplete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setButtonSelected(btnComplete);
+                    setButtonUnselected(btnWorking);
+                    setButtonUnselected(btnAll);
+                    setButtonUnselected(btnLate);
 
-                listViewTask.setAdapter(arrayAdapter);
-            }
-        });
+                    taskArrayList.clear();
+                    taskArrayList = dbHelper.getAllTasksByStatus(3);
+                    arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
 
-        btnLate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setButtonSelected(btnLate);
-                setButtonUnselected(btnWorking);
-                setButtonUnselected(btnComplete);
-                setButtonUnselected(btnAll);
+                    listViewTask.setAdapter(arrayAdapter);
+                }
+            });
 
-                taskArrayList.clear();
-                taskArrayList = dbHelper.getAllTasksByStatus(4);
-                arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
+            btnLate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setButtonSelected(btnLate);
+                    setButtonUnselected(btnWorking);
+                    setButtonUnselected(btnComplete);
+                    setButtonUnselected(btnAll);
 
-                listViewTask.setAdapter(arrayAdapter);
-            }
-        });
+                    taskArrayList.clear();
+                    taskArrayList = dbHelper.getAllTasksByStatus(4);
 
-        btnSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment searchTaskFragment = new SearchTaskFragment();
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, searchTaskFragment)
-                        .addToBackStack(null)
-                        .commit();
+                    arrayAdapter = new TaskViewAdapter(getActivity(), taskArrayList);
 
-            }
-        });
+                    listViewTask.setAdapter(arrayAdapter);
+                }
+            });
 
-        listViewTask.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String data = String.valueOf(taskArrayList.get(position).getTaskID());
+            btnSearch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Fragment searchTaskFragment = new SearchTaskFragment();
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, searchTaskFragment)
+                            .addToBackStack(null)
+                            .commit();
 
-                Fragment editTaskFragment = EditTaskFragment.newInstance(data);
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, editTaskFragment)
-                        .addToBackStack(null)
-                        .commit();
+                }
+            });
 
-            }
-        });
+            listViewTask.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String data = String.valueOf(taskArrayList.get(position).getTaskID());
+                    Log.d("ID task", "onItemClick: " + data);
+                    Fragment editTaskFragment = EditTaskFragment.newInstance(data);
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, editTaskFragment)
+                            .addToBackStack(null)
+                            .commit();
 
-        listViewTask.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                showDeleteConfirmationDialog(position);
-                return true;
-            }
-        });
+                }
+            });
 
+            listViewTask.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    showDeleteConfirmationDialog(position);
+                    return true;
+                }
+            });
+        }catch (Exception ex){
+            Log.d("TAG", "onCreateView: " + ex);
+        }
         return view;
+
     }
 
 
