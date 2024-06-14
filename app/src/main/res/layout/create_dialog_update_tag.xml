@@ -51,13 +51,13 @@
                 android:id="@+id/radioButtonColor1"
                 android:layout_width="29dp"
                 android:layout_height="wrap_content"
-                android:tag="#EE0000" />
+                android:tag="#FF0033" />
 
             <RelativeLayout
                 android:layout_width="53dp"
                 android:layout_height="30dp"
                 android:layout_margin="10dp"
-                android:background="#EE0000"
+                android:background="#FF0033"
                 android:clickable="false"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
@@ -99,13 +99,13 @@
                 android:id="@+id/radioButtonColor3"
                 android:layout_width="29dp"
                 android:layout_height="wrap_content"
-                android:tag="#00CC33" />
+                android:tag="#33FF99" />
 
             <RelativeLayout
                 android:layout_width="50sp"
                 android:layout_height="30dp"
                 android:layout_margin="10dp"
-                android:background="#00CC33"
+                android:background="#33FF99"
                 android:clickable="false"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
@@ -124,13 +124,13 @@
                 android:id="@+id/radioButtonColor4"
                 android:layout_width="31dp"
                 android:layout_height="wrap_content"
-                android:tag="#00CCFF" />
+                android:tag="#33FFFF" />
 
             <RelativeLayout
                 android:layout_width="50sp"
                 android:layout_height="30dp"
                 android:layout_margin="10dp"
-                android:background="#00CCFF"
+                android:background="#33FFFF"
                 android:clickable="false"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
@@ -148,13 +148,13 @@
                 android:id="@+id/radioButtonColor5"
                 android:layout_width="29dp"
                 android:layout_height="wrap_content"
-                android:tag="#4169E1" />
+                android:tag="#0033FF" />
 
             <RelativeLayout
                 android:layout_width="50sp"
                 android:layout_height="30dp"
                 android:layout_margin="10dp"
-                android:background="#4169E1"
+                android:background="#0033FF"
                 android:clickable="false"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
@@ -172,13 +172,13 @@
                 android:id="@+id/radioButtonColor6"
                 android:layout_width="31dp"
                 android:layout_height="wrap_content"
-                android:tag="#FF6699" />
+                android:tag="#FFD0D0" />
 
             <RelativeLayout
                 android:layout_width="51dp"
                 android:layout_height="30dp"
                 android:layout_margin="10dp"
-                android:background="#FF6699"
+                android:background="#FFD0D0"
                 android:clickable="false"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
@@ -197,13 +197,13 @@
                 android:id="@+id/radioButtonColor7"
                 android:layout_width="31dp"
                 android:layout_height="wrap_content"
-                android:tag="#A9A9A9" />
+                android:tag="#FF6600" />
 
             <RelativeLayout
                 android:layout_width="50sp"
                 android:layout_height="30dp"
                 android:layout_margin="10dp"
-                android:background="#A9A9A9"
+                android:background="#FF6600"
                 android:clickable="false"
                 android:focusable="false"
                 android:focusableInTouchMode="false"

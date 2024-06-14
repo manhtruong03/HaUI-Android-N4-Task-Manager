@@ -15,6 +15,9 @@ import androidx.fragment.app.Fragment;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.google.android.material.textfield.TextInputEditText;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -435,6 +438,7 @@ public class CreateTaskFragment extends Fragment {
                 refreshSpinner();
                 showAlert("Xóa nhãn thành công");
                 spinner.setText("");
+                reloadFragment();
             } else {
                 showAlert("Có lỗi xảy ra khi xóa nhãn");
             }
@@ -463,5 +467,11 @@ public class CreateTaskFragment extends Fragment {
             e.printStackTrace();
             showAlert("Có lỗi xảy ra khi làm mới danh sách nhãn");
         }
+    }
+    public void reloadFragment() {
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, new CreateTaskFragment());
+        fragmentTransaction.commit();
     }
 }
