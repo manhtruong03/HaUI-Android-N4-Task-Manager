@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import haui.android.taskmanager.models.Status;
 import haui.android.taskmanager.models.Tag;
@@ -131,18 +132,19 @@ public class DBHelper extends SQLiteOpenHelper {
         insertTag(db, "Khẩn cấp", "Green");
         insertTag(db, "Nhà", "Yellow");
         insertTag(db, "Linh tinh", "Purple");
+        insertTag(db, "Khác", "Pink");
 
         // Insert tasks
-        addTask(db, "Hoàn thành báo cáo", "Hoàn thành báo cáo tài chính hàng tháng.", "2024-06-01", "09:00", "2024-06-02", "17:00", 1, 1, 1);
-        addTask(db, "Họp nhóm", "Tham dự cuộc họp nhóm hàng tuần.", "2024-06-03", "10:00", "2024-06-03", "11:00", 2, 2, 2);
-        addTask(db, "Deadline dự án", "Gửi sản phẩm cuối cùng của dự án.", "2024-06-05", "14:00", "2024-06-05", "16:00", 3, 3, 3);
-        addTask(db, "Gọi cho khách hàng", "Gọi với khách hàng để thảo luận về các yêu cầu của dự án.", "2024-06-07", "13:00", "2024-06-07", "14:00", 1, 4, 4);
-        addTask(db, "Đánh giá code", "Xem lại mã được gửi bởi các thành viên trong nhóm.", "2024-06-09", "15:00", "2024-06-09", "17:00", 2, 1, 5);
-        addTask(db, "Cập nhật trang web", "Cập nhật tin tức mới nhất vào trang web công ty.", "2024-06-11", "16:00", "2024-06-11", "18:00", 3, 2, 1);
-        addTask(db, "Sửa lỗi", "Sửa lỗi do nhóm QA báo cáo..", "2024-06-13", "09:00", "2024-06-13", "12:00", 1, 3, 2);
-        addTask(db, "Tính năng mới", "Phát triển tính năng mới cho ứng dụng di động.", "2024-06-15", "10:00", "2024-06-15", "17:00", 2, 4, 3);
-        addTask(db, "Viết tài liệu", "Viết tài liệu cho API mới.", "2024-06-17", "11:00", "2024-06-17", "13:00", 3, 1, 4);
-        addTask(db, "Lên kế hoạch chạy nước rút", "Lập kế hoạch nhiệm vụ cho lần chạy nước rút tiếp theo.", "2024-06-19", "09:00", "2024-06-19", "11:00", 1, 2, 5);
+        addTask(db, "Hoàn thành báo cáo", "Hoàn thành báo cáo tài chính hàng tháng.", "01/06/2024", "09:00", "02/06/2024", "17:00", 1, 1, 1);
+        addTask(db, "Họp nhóm", "Tham dự cuộc họp nhóm hàng tuần.", "03/06/2024", "10:00", "05/06/2024", "11:00", 2, 2, 2);
+        addTask(db, "Deadline dự án", "Gửi sản phẩm cuối cùng của dự án.", "01/06/2024", "14:00", "06/06/2024", "16:00", 3, 3, 3);
+        addTask(db, "Gọi cho khách hàng", "Gọi với khách hàng để thảo luận về các yêu cầu của dự án.", "05/06/2024", "13:00", "10/06/2024", "14:00", 1, 4, 4);
+        addTask(db, "Đánh giá code", "Xem lại mã được gửi bởi các thành viên trong nhóm.", "09/06/2024", "15:00", "11/06/2024", "17:00", 2, 1, 5);
+        addTask(db, "Cập nhật trang web", "Cập nhật tin tức mới nhất vào trang web công ty.", "11/06/2024", "16:00", "11/06/2024", "18:00", 3, 2, 1);
+        addTask(db, "Sửa lỗi", "Sửa lỗi do nhóm QA báo cáo..", "12/06/2024", "09:00", "14/06/2024", "12:00", 1, 3, 2);
+        addTask(db, "Tính năng mới", "Phát triển tính năng mới cho ứng dụng di động.", "14/06/2024", "10:00", "15/06/2024", "17:00", 2, 4, 3);
+        addTask(db, "Viết tài liệu", "Viết tài liệu cho API mới.", "14/06/2024", "11:00", "16/06/2024", "13:00", 3, 1, 4);
+        addTask(db, "Lên kế hoạch chạy nước rút", "Lập kế hoạch nhiệm vụ cho lần chạy nước rút tiếp theo.", "19/06/2024", "09:00", "20/06/2024", "11:00", 1, 2, 5);
     }
 
     private void addTask(SQLiteDatabase db, String taskName, String description, String startDate, String startTime, String endDate, String endTime, int priority, int statusID, int tagID) {
@@ -243,6 +245,23 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
         return newRowId;
     }
+
+    public Tag getTagById(int tagID){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Tag tag = null;
+        Cursor cursor = db.query(TABLE_TAG_NAME, new String[]{
+                        COLUMN_TAG_ID, COLUMN_TAG_NAME, COLUMN_TAG_COLOR},
+                COLUMN_TAG_ID + "=?", new String[]{String.valueOf(tagID)},
+                null, null, null);
+
+        if (cursor.moveToFirst()) {
+            tag = createTagFromCursor(cursor);
+        }
+        cursor.close();
+        db.close();
+        return tag;
+    }
+
 
     public Tag getTag(int id) {
         SQLiteDatabase db = this.getReadableDatabase();

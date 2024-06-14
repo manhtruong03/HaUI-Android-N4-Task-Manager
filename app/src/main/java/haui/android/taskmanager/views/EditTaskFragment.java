@@ -49,7 +49,6 @@ public class EditTaskFragment extends Fragment {
     Button btnUpdate, btnComplete;
     CheckBox checkBoxWorking;
     Task currentTask;
-    int IDTag;
     DBHelper dbHelper;
 
     // TODO: Rename and change types and number of parameters
@@ -103,63 +102,59 @@ public class EditTaskFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_edit_task, container, false);
         initView(view);
 
-        if (getArguments() != null) {
-            Integer position = Integer.valueOf(getArguments().getString(ARG_DATA));
-            currentTask = dbHelper.getTaskById(position);
+        try {
+            if (getArguments() != null) {
+                Integer position = Integer.valueOf(getArguments().getString(ARG_DATA));
 
-            if(currentTask.getStatusID() == 3 || currentTask.getStatusID() == 4){
-                btnComplete.setVisibility(View.GONE);
-                checkBoxWorking.setVisibility(View.GONE);
-            }
+                currentTask = dbHelper.getTaskById(position);
 
-            if(currentTask.getStatusID() == 2 ){
-                checkBoxWorking.setVisibility(View.GONE);
-            }
 
-            spinner.setSelection(currentTask.getTagID()-1);
-            titleTask.setText(currentTask.getTaskName());
-            decriptionTask.setText(currentTask.getDescription());
-            datestart.setText(currentTask.getStartDate());
-            timestart.setText(currentTask.getStartTime());
-            dateend.setText(currentTask.getEndDate());
-            timeend.setText(currentTask.getEndTime());
-        }
+                    Tag tag = dbHelper.getTagById(currentTask.getTagID());
 
-        datestart.setOnClickListener(v -> chooseDate(datestart));
-        timestart.setOnClickListener(v -> chooseTime(timestart));
-        dateend.setOnClickListener(v -> chooseDate(dateend));
-        timeend.setOnClickListener(v -> chooseTime(timeend));
-        btnUpdate.setOnClickListener(v -> updateTask(currentTask));
-        btnComplete.setOnClickListener(v -> completeTask(currentTask));
-        checkBoxWorking.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    dbHelper.updateStatusTask(currentTask.getTaskID(), 2);
-                    Toast.makeText(getActivity(), "Cập nhật trạng thái thành công.", Toast.LENGTH_SHORT).show();
-                    checkBoxWorking.setEnabled(false);
+                    int indexNhans = findPosition(nhans, tag.getTagName());
+
+
+                if(currentTask.getStatusID() == 3 || currentTask.getStatusID() == 4){
+                    btnComplete.setVisibility(View.GONE);
+                    checkBoxWorking.setVisibility(View.GONE);
                 }
 
-            }
-        });
+                if(currentTask.getStatusID() == 2 ){
+                    checkBoxWorking.setVisibility(View.GONE);
+                }
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                IDTag = position + 1;
+                spinner.setSelection(indexNhans);
+                titleTask.setText(currentTask.getTaskName());
+                decriptionTask.setText(currentTask.getDescription());
+                datestart.setText(currentTask.getStartDate());
+                timestart.setText(currentTask.getStartTime());
+                dateend.setText(currentTask.getEndDate());
+                timeend.setText(currentTask.getEndTime());
             }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            datestart.setOnClickListener(v -> chooseDate(datestart));
+            timestart.setOnClickListener(v -> chooseTime(timestart));
+            dateend.setOnClickListener(v -> chooseDate(dateend));
+            timeend.setOnClickListener(v -> chooseTime(timeend));
+            btnUpdate.setOnClickListener(v -> updateTask());
+            btnComplete.setOnClickListener(v -> completeTask(currentTask));
+            checkBoxWorking.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        dbHelper.updateStatusTask(currentTask.getTaskID(), 2);
+                        Toast.makeText(getActivity(), "Cập nhật trạng thái thành công.", Toast.LENGTH_SHORT).show();
+                        checkBoxWorking.setEnabled(false);
+                    }
 
-            }
-        });
+                }
+            });
+
+        }catch (Exception ex){
+            Log.e("Error Edit Task:", "onCreateView: ", ex );
+        }
 
         return view;
-    }
-
-    private void workingTask(Task task){
-
     }
 
     private void completeTask(Task task){
@@ -189,27 +184,27 @@ public class EditTaskFragment extends Fragment {
     }
 
 
-    private void updateTask(Task task){
+    private void updateTask(){
         if(checkValue())
             Toast.makeText(getActivity(), "Vui lòng nhập đủ nôi dung !!!", Toast.LENGTH_SHORT).show();
 
-        else{
+        else {
 
-            dbHelper.updateTask(task.getTaskID(), decriptionTask.getText().toString(),
+            dbHelper.updateTask(currentTask.getTaskID(), decriptionTask.getText().toString(),
                     datestart.getText().toString(), timestart.getText().toString(),
-                    dateend.getText().toString(), timeend.getText().toString(), IDTag);
+                    dateend.getText().toString(), timeend.getText().toString(), currentTask.getTagID());
 
             Toast.makeText(getActivity(), "Sửa thành công.", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public static int findPosition(String[] array, String value) {
-        for (int i = 0; i < array.length; i++) {
-            if (array[i].equals(value)) {
+    public int findPosition(List<String> array, String value) {
+        for (int i = 0; i < array.size(); i++) {
+            if (array.get(i).equals(value)) {
                 return i;
             }
         }
-        return -1; // Trả về -1 nếu không tìm thấy
+        return 0; // Trả về -1 nếu không tìm thấy
     }
 
     private void chooseDate(TextInputEditText date) {

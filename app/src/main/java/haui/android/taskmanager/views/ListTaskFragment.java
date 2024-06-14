@@ -200,7 +200,7 @@ public class ListTaskFragment extends Fragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String data = String.valueOf(taskArrayList.get(position).getTaskID());
-
+                    Log.d("ID task", "onItemClick: " + data);
                     Fragment editTaskFragment = EditTaskFragment.newInstance(data);
                     getActivity().getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, editTaskFragment)
