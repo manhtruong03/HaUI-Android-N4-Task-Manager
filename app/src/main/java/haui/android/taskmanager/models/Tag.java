@@ -1,5 +1,7 @@
 package haui.android.taskmanager.models;
 
+import java.util.Objects;
+
 public class Tag {
     private int tagID;
     private String tagName;
@@ -37,4 +39,19 @@ public class Tag {
     public void setTagColor(String tagColor) {
         this.tagColor = tagColor;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tag tag = (Tag) o;
+        return Objects.equals(tagName, tag.tagName) &&
+                Objects.equals(tagColor, tag.tagColor);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tagName, tagColor);
+    }
+
 }
