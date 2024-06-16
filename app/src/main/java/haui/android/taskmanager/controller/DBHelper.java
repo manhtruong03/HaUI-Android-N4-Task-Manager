@@ -196,10 +196,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         insertNotification(db, 8, "Đến hạn: Tính năng mới", "Phát triển tính năng mới cho ứng dụng di động.", "15/06/2024 17:00");
         insertNotification(db, 8, "[Nhắc lại] Đến hạn: Tính năng mới", "Phát triển tính năng mới cho ứng dụng di động.", "15/06/2024 17:05");
-
-
-//        insertNotification(db, 10,  "Bắt đầu: Lên kế hoạch chạy nước rút", "Lập kế hoạch nhiệm vụ cho lần chạy nước rút tiếp theo.", "19/06/2024 09:00");
-//        insertNotification(db, 10, "[Nhắc lại] Bắt đầu: Lên kế hoạch chạy nước rút", "Lập kế hoạch nhiệm vụ cho lần chạy nước rút tiếp theo.", "19/06/2024 09:05");
     }
 
     private void addTask(SQLiteDatabase db, String taskName, String description, String startDate, String startTime, String endDate, String endTime, int priority, int statusID, int tagID) {
@@ -488,19 +484,19 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public List<Task> getTasksByDay(String date) {
         List<Task> tasks = new ArrayList<>();
-        String selectQuery = "SELECT t.*, s." + COLUMN_STATUS_NAME + ", g." + COLUMN_TAG_NAME + ", g." + COLUMN_TAG_COLOR + " FROM "
-                + TABLE_TASK_NAME + " t LEFT JOIN " + TABLE_STATUS_NAME + " s ON t." + COLUMN_TASK_STATUS_ID + " = s." + COLUMN_STATUS_ID
-                + " LEFT JOIN " + TABLE_TAG_NAME + " g ON t." + COLUMN_TASK_TAG_ID + " = g." + COLUMN_TAG_ID
-                + " WHERE ? BETWEEN t." + COLUMN_TASK_START_DATE + " AND t." + COLUMN_TASK_END_DATE;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{date});
 
+        String selectQuery = "SELECT t.*, s." + COLUMN_STATUS_NAME + ", g." + COLUMN_TAG_NAME + ", g." + COLUMN_TAG_COLOR
+                + " FROM " + TABLE_TASK_NAME + " t LEFT JOIN " + TABLE_STATUS_NAME + " s ON t." + COLUMN_TASK_STATUS_ID + " = s." + COLUMN_STATUS_ID
+                + " LEFT JOIN " + TABLE_TAG_NAME + " g ON t." + COLUMN_TASK_TAG_ID + " = g." + COLUMN_TAG_ID
+                + " WHERE date(substr(t." + COLUMN_TASK_START_DATE + ", 7, 4) || '-' || substr(t." + COLUMN_TASK_START_DATE + ", 4, 2) || '-' || substr(t." + COLUMN_TASK_START_DATE + ", 1, 2)) <= date(?)"
+                + " AND date(substr(t." + COLUMN_TASK_END_DATE + ", 7, 4) || '-' || substr(t." + COLUMN_TASK_END_DATE + ", 4, 2) || '-' || substr(t." + COLUMN_TASK_END_DATE + ", 1, 2)) >= date(?)";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{date, date});
 
         if (cursor.moveToFirst()) {
             do {
-                Task task = new Task();
-                task = createTaskFromCursor(cursor);
-
+                Task task = createTaskFromCursor(cursor);
                 tasks.add(task);
             } while (cursor.moveToNext());
         }
