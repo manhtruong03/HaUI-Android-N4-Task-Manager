@@ -1,7 +1,10 @@
 package haui.android.taskmanager.views;
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,6 +39,7 @@ import android.widget.RadioButton;
 import haui.android.taskmanager.R;
 import haui.android.taskmanager.controller.DBHelper;
 import haui.android.taskmanager.models.Tag;
+import haui.android.taskmanager.notification.NotificationScheduler;
 
 public class CreateTaskFragment extends Fragment {
     AutoCompleteTextView spinner;
@@ -44,6 +48,7 @@ public class CreateTaskFragment extends Fragment {
     Button btnAddTask;
     ImageView editTag;
     DBHelper db;
+    NotificationScheduler notificationScheduler;
 
     int vitri = -1, tagid = -1;
 
@@ -68,6 +73,7 @@ public class CreateTaskFragment extends Fragment {
         editTag = view.findViewById(R.id.editTag);
 
         db = new DBHelper(requireContext());
+        notificationScheduler = new NotificationScheduler(requireContext());
 
         List<Tag> arrTag = db.getAllTags();
         // Sử dụng Set để loại bỏ các phần tử trùng lặp
@@ -171,11 +177,13 @@ public class CreateTaskFragment extends Fragment {
         }
 
         // Kiểm tra nếu ngày kết thúc sau ngày bắt đầu
+        Date startDateTime;
+        Date endDateTime;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
         try {
             // Chuyển đổi chuỗi ngày giờ thành đối tượng Date
-            Date startDateTime = dateFormat.parse(startDate + " " + startTime);
-            Date endDateTime = dateFormat.parse(endDate + " " + endTime);
+            startDateTime = dateFormat.parse(startDate + " " + startTime);
+            endDateTime = dateFormat.parse(endDate + " " + endTime);
 
             if (endDateTime.before(startDateTime)) {
                 showAlert("Ngày kết thúc phải sau ngày bắt đầu!");
@@ -184,6 +192,7 @@ public class CreateTaskFragment extends Fragment {
                 showAlert("Thời gian kết thúc phải sau thời gian bắt đầu!");
                 return;
             }
+
         } catch (ParseException e) {
             e.printStackTrace();
             showAlert("Định dạng ngày giờ không hợp lệ!");
@@ -199,12 +208,39 @@ public class CreateTaskFragment extends Fragment {
         if (taskId != -1) {
             // Nếu thêm thành công, hiển thị thông báo thành công
             showAlert("Thêm task thành công.");
+            // Schedule notifications for start and end times
+            scheduleTaskNotifications((int)taskId, name, description, startDateTime, endDateTime);
         } else {
             // Nếu thêm không thành công, hiển thị thông báo lỗi
             showAlert("Có lỗi xảy ra khi thêm task.");
         }
         clearInput();
         Log.d("TAG", "tag id them" + tagid);
+    }
+
+
+    private void scheduleTaskNotifications(int taskID, String taskName, String taskDescription, Date startDateTime, Date endDateTime) {
+        String channelId = "taskNotifications";
+        String channelName = "Thông báo nhiệm vụ";
+        String channelDescription = "Thông báo cho các sự kiện nhiệm vụ\n";
+
+        notificationScheduler.createNotificationChannel(channelId, channelName, channelDescription, NotificationManager.IMPORTANCE_HIGH);
+
+        // Tính thời gian bằng mili giây
+        int startNotificationId = taskID + 1000;
+        int endNotificationId = startNotificationId + 999;
+
+        long startTimeMillis = startDateTime.getTime() - System.currentTimeMillis();
+        long endTimeMillis = endDateTime.getTime() - System.currentTimeMillis();
+
+        notificationScheduler.scheduleNotificationWithTwoActions(channelId,
+                startNotificationId,
+                "Bắt đầu: " + taskName, taskDescription,
+                startTimeMillis);
+        notificationScheduler.scheduleNotificationWithTwoActions(channelId,
+                endNotificationId,
+                "Hết hạn: " + taskName, taskDescription,
+                endTimeMillis);
     }
 
     private void clearInput() {

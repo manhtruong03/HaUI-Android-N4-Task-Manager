@@ -1,6 +1,9 @@
 package haui.android.taskmanager.views;
 
+import static android.content.ContentValues.TAG;
+
 import android.app.DatePickerDialog;
+import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 
@@ -27,11 +30,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Locale;
 
 import haui.android.taskmanager.R;
 import haui.android.taskmanager.controller.DBHelper;
 import haui.android.taskmanager.models.Tag;
 import haui.android.taskmanager.models.Task;
+import haui.android.taskmanager.notification.NotificationScheduler;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,6 +55,7 @@ public class EditTaskFragment extends Fragment {
     CheckBox checkBoxWorking;
     Task currentTask;
     DBHelper dbHelper;
+    NotificationScheduler notificationScheduler;
 
     // TODO: Rename and change types and number of parameters
     public static EditTaskFragment newInstance(String param1) {
@@ -68,6 +74,8 @@ public class EditTaskFragment extends Fragment {
 
     private void initView(View view){
         dbHelper = new DBHelper(getContext());
+        notificationScheduler = new NotificationScheduler(requireContext());
+
         spinner = view.findViewById(R.id.edit_spinner);
         datestart = view.findViewById(R.id.edit_date_start);
         timestart = view.findViewById(R.id.edit_time_start);
@@ -157,7 +165,7 @@ public class EditTaskFragment extends Fragment {
         return view;
     }
 
-    private void completeTask(Task task){
+    public void completeTask(Task task){
         if(task.getStatusID() == 3) {
             Toast.makeText(getActivity(), "Công việc đã hoàn thành.", Toast.LENGTH_SHORT).show();
         }else{
@@ -165,6 +173,7 @@ public class EditTaskFragment extends Fragment {
             String stringDate = task.getEndDate() + " " + task.getEndTime();
 
             SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
             try {
                 Date dateEnd = dateTimeFormat.parse(stringDate);
                 Date dateNow = new Date();
@@ -175,6 +184,8 @@ public class EditTaskFragment extends Fragment {
                     dbHelper.updateStatusTask(task.getTaskID(), 3);
                 }
 
+                // Xóa thông báo cũ vì đã hoàn thành
+                removeOldNotifications(currentTask.getTaskID());
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
@@ -189,12 +200,67 @@ public class EditTaskFragment extends Fragment {
             Toast.makeText(getActivity(), "Vui lòng nhập đủ nôi dung !!!", Toast.LENGTH_SHORT).show();
 
         else {
+            // Xóa thông báo cũ trước khi cập nhật tác vụ
+            removeOldNotifications(currentTask.getTaskID());
 
             dbHelper.updateTask(currentTask.getTaskID(), decriptionTask.getText().toString(),
                     datestart.getText().toString(), timestart.getText().toString(),
                     dateend.getText().toString(), timeend.getText().toString(), currentTask.getTagID());
 
+            // Lên lịch thông báo mới với các chi tiết cập nhật
+            scheduleTaskNotifications();
+
             Toast.makeText(getActivity(), "Sửa thành công.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void removeOldNotifications(int taskID) {
+        int startNotificationId = taskID + 1000;
+        int endNotificationId = startNotificationId + 999;
+
+        notificationScheduler.cancelNotification(startNotificationId);
+        notificationScheduler.cancelNotification(endNotificationId);
+    }
+
+    private void scheduleTaskNotifications() {
+        String startDate = datestart.getText().toString();
+        String startTime = timestart.getText().toString();
+        String endDate = dateend.getText().toString();
+        String endTime = timeend.getText().toString();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+
+        try {
+            Date startDateTime = dateFormat.parse(startDate + " " + startTime);
+            Date endDateTime = dateFormat.parse(endDate + " " + endTime);
+
+            String channelId = "taskNotifications";
+            String channelName = "Thông báo nhiệm vụ";
+            String channelDescription = "Thông báo cho các sự kiện nhiệm vụ\n";
+
+            notificationScheduler.createNotificationChannel(channelId, channelName, channelDescription, NotificationManager.IMPORTANCE_HIGH);
+
+            // Tính thời gian bằng mili giây
+            long startTimeMillis = startDateTime.getTime() - System.currentTimeMillis();
+            long endTimeMillis = endDateTime.getTime() - System.currentTimeMillis();
+
+            int startNotificationId = currentTask.getTaskID() + 1000;
+            int endNotificationId = startNotificationId + 999;
+
+            notificationScheduler.scheduleNotificationWithTwoActions(channelId,
+                    startNotificationId,
+                    "Bắt đầu: " + titleTask.getText().toString(),
+                    "Mô tả: " + decriptionTask.getText().toString(),
+                    startTimeMillis);
+            notificationScheduler.scheduleNotificationWithTwoActions(channelId,
+                    endNotificationId,
+                    "Hết hạn: " + titleTask.getText().toString(),
+                    "Mô tả: " + decriptionTask.getText().toString(),
+                    endTimeMillis);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Log.d(TAG, "Định dạng ngày giờ không hợp lệ!");
         }
     }
 

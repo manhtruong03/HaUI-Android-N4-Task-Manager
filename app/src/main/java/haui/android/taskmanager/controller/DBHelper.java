@@ -1,12 +1,16 @@
 package haui.android.taskmanager.controller;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.widget.Toast;
 
+import haui.android.taskmanager.models.Notification;
 import haui.android.taskmanager.models.Status;
 import haui.android.taskmanager.models.Tag;
 import haui.android.taskmanager.models.Task;
@@ -46,6 +50,16 @@ public class DBHelper extends SQLiteOpenHelper {
     // Foreign key
     private static final String COLUMN_TASK_STATUS_ID = "StatusID";
     private static final String COLUMN_TASK_TAG_ID = "TagID";
+
+
+    // table NOTIFICATION
+    private static final String TABLE_NOTIFICATION_NAME = "NOTIFICATION";
+    private static final String COLUMN_NOTIFICATION_ID = "NotificationID";
+    private static final String COLUMN_NOTIFICATION_TASKID = "TaskID";
+    private static final String COLUMN_NOTIFICATION_TITLE = "NotificationTitle";
+    private static final String COLUMN_NOTIFICATION_CONTENT = "NotificationContent";
+    private static final String COLUMN_NOTIFICATION_TIME = "NotificationTime";
+
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -106,6 +120,22 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(createTaskTableStatement);
         }
 
+        if (!isTableExists(db, TABLE_NOTIFICATION_NAME)) {
+            String createNotificationTableStatement = String.format(
+                    "CREATE TABLE %s (" +
+                            "%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                            "%s INTEGER, " +
+                            "%s TEXT, " +
+                            "%s TEXT, " +
+                            "%s TEXT)",
+                    TABLE_NOTIFICATION_NAME, COLUMN_NOTIFICATION_ID, COLUMN_NOTIFICATION_TASKID,
+                    COLUMN_NOTIFICATION_TITLE,
+                    COLUMN_NOTIFICATION_CONTENT, COLUMN_NOTIFICATION_TIME
+            );
+            db.execSQL(createNotificationTableStatement);
+        }
+
+
         initialData(db);
     }
 
@@ -117,6 +147,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_STATUS_NAME);
         onCreate(db);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAG_NAME);
+        onCreate(db);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATION_NAME);
         onCreate(db);
     }
 
@@ -145,6 +177,29 @@ public class DBHelper extends SQLiteOpenHelper {
         addTask(db, "Tính năng mới", "Phát triển tính năng mới cho ứng dụng di động.", "14/06/2024", "10:00", "15/06/2024", "17:00", 2, 4, 3);
         addTask(db, "Viết tài liệu", "Viết tài liệu cho API mới.", "14/06/2024", "11:00", "16/06/2024", "13:00", 3, 1, 4);
         addTask(db, "Lên kế hoạch chạy nước rút", "Lập kế hoạch nhiệm vụ cho lần chạy nước rút tiếp theo.", "19/06/2024", "09:00", "20/06/2024", "11:00", 1, 2, 5);
+
+        // Insert notification
+        insertNotification(db, 3, "Bắt đầu: Deadline dự án", "Gửi sản phẩm cuối cùng của dự án.", "01/06/2024 14:00");
+        insertNotification(db, 2,"Bắt đầu: Họp nhóm", "Tham dự cuộc họp nhóm hàng tuần.", "03/06/2024 10:00");
+
+        insertNotification(db, 4, "Bắt đầu: Gọi cho khách hàng", "Gọi với khách hàng để thảo luận về các yêu cầu của dự án.", "05/06/2024 13:00");
+        insertNotification(db, 4,"[Nhắc lại] Bắt đầu: Gọi cho khách hàng", "Gọi với khách hàng để thảo luận về các yêu cầu của dự án.", "05/06/2024 13:05");
+
+        insertNotification(db, 4,"Đến hạn: Gọi cho khách hàng", "Gọi với khách hàng để thảo luận về các yêu cầu của dự án.", "10/06/2024 14:00");
+        insertNotification(db, 4, "[Nhắc lại] Đến hạn: Gọi cho khách hàng", "Gọi với khách hàng để thảo luận về các yêu cầu của dự án.", "10/06/2024 14:05");
+
+        insertNotification(db, 6,"Bắt đầu: Cập nhật trang web", "Cập nhật tin tức mới nhất vào trang web công ty.", "11/06/2024 16:00");
+        insertNotification(db, 6,"[Nhắc lại] Bắt đầu: Cập nhật trang web", "Cập nhật tin tức mới nhất vào trang web công ty.", "11/06/2024 16:05");
+
+        insertNotification(db, 8, "Bắt đầu: Tính năng mới", "Phát triển tính năng mới cho ứng dụng di động.", "14/06/2024 10:00");
+        insertNotification(db, 8, "[Nhắc lại] Bắt đầu: Tính năng mới", "Phát triển tính năng mới cho ứng dụng di động.", "14/06/2024 10:05");
+
+        insertNotification(db, 8, "Đến hạn: Tính năng mới", "Phát triển tính năng mới cho ứng dụng di động.", "15/06/2024 17:00");
+        insertNotification(db, 8, "[Nhắc lại] Đến hạn: Tính năng mới", "Phát triển tính năng mới cho ứng dụng di động.", "15/06/2024 17:05");
+
+
+//        insertNotification(db, 10,  "Bắt đầu: Lên kế hoạch chạy nước rút", "Lập kế hoạch nhiệm vụ cho lần chạy nước rút tiếp theo.", "19/06/2024 09:00");
+//        insertNotification(db, 10, "[Nhắc lại] Bắt đầu: Lên kế hoạch chạy nước rút", "Lập kế hoạch nhiệm vụ cho lần chạy nước rút tiếp theo.", "19/06/2024 09:05");
     }
 
     private void addTask(SQLiteDatabase db, String taskName, String description, String startDate, String startTime, String endDate, String endTime, int priority, int statusID, int tagID) {
@@ -159,6 +214,15 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(COLUMN_TASK_STATUS_ID, statusID);
         values.put(COLUMN_TASK_TAG_ID, tagID);
         db.insert(TABLE_TASK_NAME, null, values);
+    }
+
+    private void insertNotification(SQLiteDatabase db, int taskID, String title, String content, String time) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NOTIFICATION_TASKID, taskID);
+        values.put(COLUMN_NOTIFICATION_TITLE, title);
+        values.put(COLUMN_NOTIFICATION_CONTENT, content);
+        values.put(COLUMN_NOTIFICATION_TIME, time);
+        db.insert(TABLE_NOTIFICATION_NAME, null, values);
     }
 
     private void insertTag(SQLiteDatabase db, String tagName, String tagColor) {
@@ -184,6 +248,25 @@ public class DBHelper extends SQLiteOpenHelper {
     public Status getStatus(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_STATUS_NAME, new String[]{COLUMN_STATUS_ID, COLUMN_STATUS_NAME}, COLUMN_STATUS_ID + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            Status status = new Status(cursor.getInt(0), cursor.getString(1));
+            cursor.close();
+            db.close();
+            return status;
+        } else {
+            db.close();
+            return null;
+        }
+    }
+
+    public Status getStatusByName(String statusName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_STATUS_NAME,
+                new String[]{COLUMN_STATUS_ID, COLUMN_STATUS_NAME},
+                COLUMN_STATUS_NAME + " = ? COLLATE NOCASE",
+                new String[]{statusName},
+                null, null, null, null);
         if (cursor != null) {
             cursor.moveToFirst();
             Status status = new Status(cursor.getInt(0), cursor.getString(1));
@@ -262,6 +345,23 @@ public class DBHelper extends SQLiteOpenHelper {
         return tag;
     }
 
+
+    public Tag getTagByTagName(String tagName){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Tag tag = null;
+        Cursor cursor = db.query(TABLE_TAG_NAME,
+                new String[]{COLUMN_TAG_ID, COLUMN_TAG_NAME, COLUMN_TAG_COLOR},
+                COLUMN_TAG_NAME + " = ? COLLATE NOCASE",
+                new String[]{tagName},
+                null, null, null);
+
+        if (cursor.moveToFirst()) {
+            tag = createTagFromCursor(cursor);
+        }
+        cursor.close();
+        db.close();
+        return tag;
+    }
 
     public Tag getTag(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -663,5 +763,182 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
         return rowsAffected > 0;
     }
+
+
+
+
+
+
+
+
+
+
+    // Add a new notification
+    public long addNotification(int taskID, String title, String content, String time) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NOTIFICATION_TASKID, taskID);
+        values.put(COLUMN_NOTIFICATION_TITLE, title);
+        values.put(COLUMN_NOTIFICATION_CONTENT, content);
+        values.put(COLUMN_NOTIFICATION_TIME, time);
+
+        long newRowId = db.insert(TABLE_NOTIFICATION_NAME, null, values);
+        db.close();
+        return newRowId;
+    }
+
+    // Get a single notification by ID
+    public Notification getNotificationByNotiID(int notiID) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NOTIFICATION_NAME, new String[]{
+                        COLUMN_NOTIFICATION_ID, COLUMN_NOTIFICATION_TASKID, COLUMN_NOTIFICATION_TITLE,
+                        COLUMN_NOTIFICATION_CONTENT, COLUMN_NOTIFICATION_TIME},
+                COLUMN_NOTIFICATION_ID + "=?", new String[]{String.valueOf(notiID)},
+                null, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            Notification notification = createNotificationFromCursor(cursor);
+            cursor.close();
+            db.close();
+            return notification;
+        } else {
+            db.close();
+            return null;
+        }
+    }
+
+    // Get all notifications
+    public List<Notification> getAllNotifications() {
+        List<Notification> notifications = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_NOTIFICATION_NAME +
+                " ORDER BY " + COLUMN_NOTIFICATION_ID + " DESC;";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Notification notification = createNotificationFromCursor(cursor);
+                notifications.add(notification);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return notifications;
+    }
+
+    // Update a notification
+    public int updateNotification(Notification notification) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NOTIFICATION_TASKID, notification.getTaskID());
+        values.put(COLUMN_NOTIFICATION_TITLE, notification.getTitle());
+        values.put(COLUMN_NOTIFICATION_CONTENT, notification.getContent());
+        values.put(COLUMN_NOTIFICATION_TIME, notification.getTime());
+
+        int rowsAffected = db.update(TABLE_NOTIFICATION_NAME, values,
+                COLUMN_NOTIFICATION_ID + " = ?", new String[]{String.valueOf(notification.getNotiID())});
+        db.close();
+        return rowsAffected;
+    }
+
+    // Delete a notification
+    public int deleteNotification(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsAffected = db.delete(TABLE_NOTIFICATION_NAME, COLUMN_NOTIFICATION_ID + " = ?", new String[]{String.valueOf(id)});
+        db.close();
+        return rowsAffected;
+    }
+
+    // Helper function to create Notification object from Cursor
+    private Notification createNotificationFromCursor(Cursor cursor) {
+        Integer notiID = safeGetInteger(cursor, COLUMN_NOTIFICATION_ID);
+        Integer taskID = safeGetInteger(cursor, COLUMN_NOTIFICATION_TASKID);
+        String title = safeGetString(cursor, COLUMN_NOTIFICATION_TITLE);
+        String content = safeGetString(cursor, COLUMN_NOTIFICATION_CONTENT);
+        String time = safeGetString(cursor, COLUMN_NOTIFICATION_TIME);
+
+        if (notiID != null && taskID != null && title != null && content != null && time != null) {
+            return new Notification(notiID, taskID, title, content, time);
+        } else {
+            throw new IllegalArgumentException("createNotificationFromCursor(): Thiếu một hoặc nhiều trường thiết yếu trong con trỏ");
+        }
+    }
+
+    // Get notifications by title keyword
+    public List<Notification> searchNotifications(String keyword) {
+        List<Notification> notifications = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_NOTIFICATION_NAME + " WHERE " + COLUMN_NOTIFICATION_TITLE + " LIKE '%" + keyword + "%' OR " + COLUMN_NOTIFICATION_CONTENT + " LIKE '%" + keyword + "%'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Notification notification = createNotificationFromCursor(cursor);
+                notifications.add(notification);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return notifications;
+    }
+
+    // Delete all notifications
+    public void deleteAllNotifications() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_NOTIFICATION_NAME, null, null);
+        db.close();
+    }
+
+
+
+    // Get notifications based on the time criteria
+    public List<Notification> getNotificationsByTime(String timeCriteria) {
+        List<Notification> notifications = new ArrayList<>();
+        String selectQuery = "";
+
+        String baseQuery = "SELECT * FROM " + TABLE_NOTIFICATION_NAME + " WHERE ";
+        String dateCondition = "date(substr(" + COLUMN_NOTIFICATION_TIME + ", 7, 4) || '-' || " +
+                "substr(" + COLUMN_NOTIFICATION_TIME + ", 4, 2) || '-' || " +
+                "substr(" + COLUMN_NOTIFICATION_TIME + ", 1, 2))";
+        String orderByClause = " ORDER BY " + dateCondition + " DESC, " +
+                "time(substr(" + COLUMN_NOTIFICATION_TIME + ", 12, 2) || ':' || " +
+                "substr(" + COLUMN_NOTIFICATION_TIME + ", 15, 2)) DESC, " +
+                COLUMN_NOTIFICATION_ID + " DESC;";
+
+        switch (timeCriteria) {
+            case "today":
+                selectQuery = baseQuery + dateCondition + " = date('now', '+0 days')" + orderByClause;
+                break;
+            case "past7days":
+                selectQuery = baseQuery + dateCondition + " >= date('now', '-7 days')" + orderByClause;
+                break;
+            case "past30days":
+                selectQuery = baseQuery + dateCondition + " >= date('now', '-30 days')" + orderByClause;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid time criteria: " + timeCriteria);
+        }
+        Log.d(TAG, "selectQuery: " + selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Notification notification = createNotificationFromCursor(cursor);
+                notifications.add(notification);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return notifications;
+    }
+
+
+
 
 }

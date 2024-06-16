@@ -1,13 +1,14 @@
 package haui.android.taskmanager;
 
-import android.content.DialogInterface;
+import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -31,12 +32,21 @@ import java.io.InputStream;
 import androidx.core.content.FileProvider;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
+import haui.android.taskmanager.controller.DBHelper;
 import haui.android.taskmanager.controller.ExcelReader;
+import haui.android.taskmanager.models.Status;
+import haui.android.taskmanager.models.Tag;
+import haui.android.taskmanager.notification.NotificationScheduler;
 import haui.android.taskmanager.views.CalendarFragment;
 import haui.android.taskmanager.views.HomeFragment;
+import haui.android.taskmanager.views.ListNotificationFragment;
 import haui.android.taskmanager.views.ListTaskFragment;
-import haui.android.taskmanager.views.NotiFragment;
 import haui.android.taskmanager.views.CreateTaskFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,12 +54,14 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout subMenuContainer;
 
     private static final int REQUEST_CODE_PERMISSIONS = 100;
+    private static final int REQUEST_CODE_NOTIFICATION_PERMISSION = 101;
     private static final String TAG = "MainActivity";
     private ActivityResultLauncher<Intent> filePickerLauncher;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: 0");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -101,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 5:
                     // Open Notification
-                    openFragment(new NotiFragment(), enterAnimation, exitAnimation);
+                    openFragment(new ListNotificationFragment(), enterAnimation, exitAnimation);
                     subMenuContainer.setVisibility(View.GONE);
                     break;
                 default:
@@ -143,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 5:
                     // Open Notification
-                    openFragment(new NotiFragment(), enterAnimation, exitAnimation);
+                    openFragment(new ListNotificationFragment(), enterAnimation, exitAnimation);
                     subMenuContainer.setVisibility(View.GONE);
                     break;
                 default:
@@ -170,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
         requestPermissions();
     }
+
 
     private void openFragment(Fragment fragment, int enterAnimation, int exitAnimation) {
         if (enterAnimation == -1 || exitAnimation == -1) {
@@ -239,7 +252,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void requestPermissions() {
         String[] permissions = {
-                Manifest.permission.READ_EXTERNAL_STORAGE
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.POST_NOTIFICATIONS,
+                Manifest.permission.USE_EXACT_ALARM
         };
 
         boolean allPermissionsGranted = true;
@@ -268,21 +283,76 @@ public class MainActivity extends AppCompatActivity {
 
     private void readExcelFileFromUri(Uri uri) {
         try {
-            // Open an InputStream using the content resolver
             InputStream inputStream = getContentResolver().openInputStream(uri);
             if (inputStream != null) {
-                String content = ExcelReader.readExcelFile(inputStream);
-//                Log.d(TAG, "Excel file content: " + content);
-                new AlertDialog.Builder(this)
-                    .setTitle("Nội dung tệp")
-                    .setMessage(content)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
+                List<String> sheetContent = ExcelReader.readExcelFile(inputStream);
+
+                DBHelper dbHelper = new DBHelper(this);
+                try {
+                    for (String row : sheetContent) {
+                        String[] cell = row.split("\\|");
+
+                        String name = cell[0];
+                        String description = cell[1];
+                        String startDate = cell[2];
+                        String startTime = cell[3];
+                        String endDate = cell[4];
+                        String endTime = cell[5];
+                        int priority = 1;   // Integer.parseInt(cell[6])
+                        int selectedTagId; // = Integer.parseInt(cell[4]);
+                        String tagName = cell[7];
+                        int statusId;   //  = Integer.parseInt(cell[6]);
+                        String statusName = cell[8];
+
+                        Tag tag = dbHelper.getTagByTagName(tagName);
+                        if (tag != null) {
+                            selectedTagId = tag.getTagID();
                         }
-                    })
-                    .show();
+                        else {
+                            Tag newTag = new Tag(0, tagName, "");
+                            selectedTagId = (int)dbHelper.addTag(newTag);
+                        }
+
+                        Status status = dbHelper.getStatusByName(statusName);
+                        if (status != null)
+                            statusId = status.getStatusID();
+                        else
+                            statusId = (int)dbHelper.addStatus(tagName);
+
+                        Date startDateTime;
+                        Date endDateTime;
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                        try {
+                            // Chuyển đổi chuỗi ngày giờ thành đối tượng Date
+                            startDateTime = dateFormat.parse(startDate + " " + startTime);
+                            endDateTime = dateFormat.parse(endDate + " " + endTime);
+
+                            if (endDateTime.before(startDateTime)) {
+                                showAlert("Ngày kết thúc phải sau ngày bắt đầu!");
+                                return;
+                            } else if (endDateTime.equals(startDateTime)) {
+                                showAlert("Thời gian kết thúc phải sau thời gian bắt đầu!");
+                                return;
+                            }
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                            showAlert("Định dạng ngày giờ không hợp lệ!");
+                            return;
+                        }
+
+                        long taskId = dbHelper.insertTask(name, description, startDate, startTime, endDate, endTime, priority, statusId, selectedTagId);
+
+                        if (taskId != -1) {
+                            showAlert("Thêm task thành công.");
+                            scheduleTaskNotifications((int)taskId, name, description, startDateTime, endDateTime);
+                        } else {
+                            showAlert("Có lỗi xảy ra khi thêm task.");
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 inputStream.close();
             }
@@ -315,8 +385,39 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    private void showAlert(String message) {
+        new AlertDialog.Builder(this)
+                .setTitle("Thông báo")
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .show();
+    }
 
+    private void scheduleTaskNotifications(int taskID, String taskName, String taskDescription, Date startDateTime, Date endDateTime) {
+        String channelId = "taskNotifications";
+        String channelName = "Thông báo nhiệm vụ";
+        String channelDescription = "Thông báo cho các sự kiện nhiệm vụ\n";
 
+        NotificationScheduler notificationScheduler = new NotificationScheduler(this);
+
+        notificationScheduler.createNotificationChannel(channelId, channelName, channelDescription, NotificationManager.IMPORTANCE_HIGH);
+
+        // Tính thời gian bằng mili giây
+        int startNotificationId = taskID + 1000;
+        int endNotificationId = startNotificationId + 999;
+
+        long startTimeMillis = startDateTime.getTime() - System.currentTimeMillis();
+        long endTimeMillis = endDateTime.getTime() - System.currentTimeMillis();
+
+        notificationScheduler.scheduleNotificationWithTwoActions(channelId,
+                startNotificationId,
+                "Bắt đầu: " + taskName, taskDescription,
+                startTimeMillis);
+        notificationScheduler.scheduleNotificationWithTwoActions(channelId,
+                endNotificationId,
+                "Hết hạn: " + taskName, taskDescription,
+                endTimeMillis);
+    }
 
 
 
@@ -352,3 +453,5 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
+
+

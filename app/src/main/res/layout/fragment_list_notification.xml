@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:padding="10dp"
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center|start">
+
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:layout_marginStart="10dp"
+            android:text="Thông báo"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_marginEnd="10dp"
+            android:id="@+id/list_btn_search"
+            android:src="@drawable/search_task_ic_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="#5F33E1" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="14dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/list_btn_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tất cả"
+            android:background="@drawable/border_search_button"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            />
+
+        <Space
+            android:layout_width="8dp"
+            android:layout_height="match_parent"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/list_btn_today"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hôm nay"
+            android:background="@drawable/border_phanloai_listtask"
+            android:textColor="#5F33E1"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            />
+
+
+        <Space
+            android:layout_width="8dp"
+            android:layout_height="match_parent"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/list_btn_past7days"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_phanloai_listtask"
+            android:text="7 ngày trước"
+            android:textAllCaps="false"
+            android:textColor="#5F33E1"
+            android:textSize="13sp" />
+
+        <Space
+            android:layout_width="8dp"
+            android:layout_height="match_parent" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/list_btn_past30days"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_phanloai_listtask"
+            android:text="30 ngày trước"
+            android:textAllCaps="false"
+            android:textColor="#5F33E1"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp"/>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/list_view_notification"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@drawable/custom_divider_list_task"
+            android:dividerHeight="12dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"/>
+    </LinearLayout>
+
+
+</LinearLayout>

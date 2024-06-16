@@ -1,4 +1,4 @@
-package haui.android.taskmanager;
+package haui.android.taskmanager.test;
 
 
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.List;
 
+import haui.android.taskmanager.R;
 import haui.android.taskmanager.controller.DBHelper;
 import haui.android.taskmanager.models.Status;
 import haui.android.taskmanager.models.Tag;
