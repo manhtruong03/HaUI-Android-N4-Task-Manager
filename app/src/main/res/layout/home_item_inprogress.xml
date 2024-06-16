@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="225dp"
+    android:layout_height="110dp"
+    android:layout_margin="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#2196F3"
+    app:cardBackgroundColor="#D1E5F4"
+    app:cardCornerRadius="20dp">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp">
+
+            <ImageView
+                android:id="@+id/home_custom_shape"
+                android:layout_width="24dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/home_border_tag_pink" />
+            <TextView
+                android:id="@+id/home_txtTieuDeCV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:layout_gravity="center"
+                android:text="Office Project" />
+
+        </TableRow>
+
+        <TextView
+            android:id="@+id/home_txtTenCV"
+            android:layout_width="wrap_content"
+            android:layout_height="51dp"
+            android:layout_marginLeft="20dp"
+            android:paddingTop="5dp"
+            android:text="Grocery shopping app design"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <ProgressBar
+            android:id="@+id/home_inprogress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="185dp"
+            android:layout_height="15dp"
+            android:layout_marginLeft="20dp"
+            android:paddingTop="7dp"
+            android:progressDrawable="@drawable/home_custom_progress_bg"
+            android:secondaryProgressTint="#B24040" />
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

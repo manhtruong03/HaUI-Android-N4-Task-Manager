@@ -50,7 +50,7 @@ import haui.android.taskmanager.views.ListTaskFragment;
 import haui.android.taskmanager.views.CreateTaskFragment;
 
 public class MainActivity extends AppCompatActivity {
-    private MeowBottomNavigation bottomNavigation;
+    public static MeowBottomNavigation bottomNavigation;
     private LinearLayout subMenuContainer;
 
     private static final int REQUEST_CODE_PERMISSIONS = 100;

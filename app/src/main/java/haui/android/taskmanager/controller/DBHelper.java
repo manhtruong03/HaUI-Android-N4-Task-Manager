@@ -159,12 +159,18 @@ public class DBHelper extends SQLiteOpenHelper {
         insertStatus(db, "Muộn");
 
         // Insert tags
-        insertTag(db, "Công việc", "Red");
-        insertTag(db, "Cá nhân", "Blue");
-        insertTag(db, "Khẩn cấp", "Green");
-        insertTag(db, "Nhà", "Yellow");
-        insertTag(db, "Linh tinh", "Purple");
-        insertTag(db, "Khác", "Pink");
+//        insertTag(db, "Công việc", "Red");
+//        insertTag(db, "Cá nhân", "Blue");
+//        insertTag(db, "Khẩn cấp", "Green");
+//        insertTag(db, "Nhà", "Yellow");
+//        insertTag(db, "Linh tinh", "Purple");
+//        insertTag(db, "Khác", "Pink");
+        // Insert tags
+        insertTag(db, "Công việc", "#FF0033");
+        insertTag(db, "Cá nhân", "#0033FF");
+        insertTag(db, "Khẩn cấp", "#33FF99");
+        insertTag(db, "Nhà", "#FFCC33");
+        insertTag(db, "Linh tinh", "#800080");
 
         // Insert tasks
         addTask(db, "Hoàn thành báo cáo", "Hoàn thành báo cáo tài chính hàng tháng.", "01/06/2024", "09:00", "02/06/2024", "17:00", 1, 1, 1);
@@ -480,6 +486,38 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return taskDetail;
+    }
+
+    public List<TaskDetail> getAllTaskDetailByTagId(int tagId) {
+        List<TaskDetail> listTaskDetail = new ArrayList<>();
+        String selectQuery = "SELECT t.*, s.*, g.* " +
+                " FROM " + TABLE_TASK_NAME + " t " +
+                " LEFT JOIN " + TABLE_STATUS_NAME + " s ON t." + COLUMN_TASK_STATUS_ID + " = s." + COLUMN_STATUS_ID +
+                " LEFT JOIN " + TABLE_TAG_NAME + " g ON t." + COLUMN_TASK_TAG_ID + " = g." + COLUMN_TAG_ID +
+                " WHERE t." + COLUMN_TAG_ID + " = ?";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(tagId)}); // Truyền tagId vào
+
+        if (cursor.moveToFirst()) {
+            do {
+                Task task = new Task();
+                Status status = new Status();
+                Tag tag = new Tag();
+
+                task = createTaskFromCursor(cursor);
+                status = createStatusFromCursor(cursor);
+                tag = createTagFromCursor(cursor);
+
+                TaskDetail taskDetail = new TaskDetail(task, status, tag);
+
+                listTaskDetail.add(taskDetail);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return listTaskDetail;
     }
 
     public List<Task> getTasksByDay(String date) {

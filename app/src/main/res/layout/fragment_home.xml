@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_main"
     android:layout_width="match_parent"
-    android:paddingTop="30dp"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
@@ -21,7 +20,7 @@
 
             <ImageView
                 android:id="@+id/home_imgAvartar"
-                android:src="@drawable/home_avartar"
+                android:src="@drawable/home_logo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 />
@@ -33,34 +32,34 @@
             android:layout_marginLeft="10dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/home_txtHello"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="18dp"
-                android:gravity="center"
-                android:text="Hello!" />
+<!--            <TextView-->
+<!--                android:id="@+id/home_txtHello"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:textSize="18dp"-->
+<!--                android:gravity="center"-->
+<!--                android:text="Hello!" />-->
 
             <TextView
+                android:layout_marginTop="5dp"
                 android:id="@+id/home_txtTen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
                 android:textStyle="bold"
                 android:textSize="20dp"
-                android:text="Nguyễn Văn Hải Duy" />
+                android:text="Chào mừng bạn đến với TaskManager"/>
         </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/home_imgBtnThongBao"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="70dp"
-            android:background="#FEF7FF"
-            app:srcCompat="@drawable/home_bell2" />
+<!--        <ImageButton-->
+<!--            android:id="@+id/home_imgBtnThongBao"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_marginLeft="70dp"-->
+<!--            android:backgroundTint="#F3CDDB"-->
+<!--            app:srcCompat="@drawable/home_bell2" />-->
 
     </TableRow>
 
@@ -90,18 +89,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20dp"
+                    android:layout_marginLeft="45dp"
                     android:textColor="@color/white"
-                    android:layout_gravity="start"
-                    android:layout_marginRight="160dp"
-                    android:text="Your today's task almost done!" />
+                    android:layout_marginRight="120dp"
+                    android:textAlignment="textStart"
+                    android:text="Tiến độ hoàn thành nhiệm vụ!" />
 
                 <Button
                     android:id="@+id/home_btnViewTask"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="110dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="View Task"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="110dp"
+                    android:text="Xem nhiệm vụ"
                     android:textColor="@color/white" />
 
 
@@ -118,13 +118,13 @@
 
             <TextView
                 android:id="@+id/home_txtProgressCircle1"
-                android:layout_marginLeft="70dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textStyle="bold"
+                android:layout_marginLeft="70dp"
+                android:text="75%"
                 android:textColor="@color/white"
-                android:text="75%" />
+                android:textStyle="bold" />
         </androidx.cardview.widget.CardView>
     </TableRow>
 
@@ -139,7 +139,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/baloo_thambi"
             android:paddingLeft="20dp"
-            android:text="In Progress"
+            android:text="Đang làm"
             android:textSize="20dp"
             android:textStyle="bold" />
 
@@ -162,241 +162,21 @@
 
     </TableRow>
 
-    <HorizontalScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:id="@+id/rcv_inprogress"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingLeft="23dp">
+            android:divider="@null"
+            app:reverseLayout="true"/>
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="225dp"
-                android:layout_height="110dp"
-                android:background="#2196F3"
-                app:cardBackgroundColor="#D1E5F4"
-                app:cardCornerRadius="20dp">
+    </RelativeLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="10dp">
-                        <RelativeLayout
-                            android:layout_width="30dp"
-                            android:layout_marginLeft="20dp"
-                            android:layout_gravity="center"
-                            android:layout_height="15dp"
-                            android:background="@drawable/home_border_tag_right" />
-                        <TextView
-                            android:id="@+id/home_txtTieuDeCV"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="20dp"
-                            android:layout_gravity="center"
-                            android:text="Office Project" />
-
-                    </TableRow>
-
-                    <TextView
-                        android:id="@+id/home_txtTenCV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="51dp"
-                        android:layout_marginLeft="20dp"
-                        android:paddingTop="5dp"
-                        android:text="Grocery shopping app design"
-                        android:textSize="17sp"
-                        android:textStyle="bold" />
-
-                    <ProgressBar
-                        android:id="@+id/home_pressRectange"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="185dp"
-                        android:layout_height="15dp"
-                        android:layout_marginLeft="20dp"
-                        android:paddingTop="7dp"
-                        android:progressDrawable="@drawable/home_custom_progress_bg"
-                        android:secondaryProgressTint="#B24040" />
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="225dp"
-                android:layout_height="110dp"
-                android:layout_marginLeft="15dp"
-                android:background="#2196F3"
-                app:cardBackgroundColor="#D1E5F4"
-                app:cardCornerRadius="25dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="10dp">
-                        <RelativeLayout
-                            android:layout_width="30dp"
-                            android:layout_marginLeft="20dp"
-                            android:layout_gravity="center"
-                            android:layout_height="15dp"
-                            android:background="@drawable/home_border_tag_right" />
-                        <TextView
-                            android:id="@+id/home_txtTieuDeCVInpgress1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="20dp"
-                            android:layout_gravity="center"
-                            android:text="Office Project" />
-
-                    </TableRow>
-
-                    <TextView
-                        android:id="@+id/home_txtTenCVInpgress1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="51dp"
-                        android:layout_marginLeft="20dp"
-                        android:paddingTop="5dp"
-                        android:text="Grocery shopping app design"
-                        android:textSize="17sp"
-                        android:textStyle="bold" />
-
-                    <ProgressBar
-                        android:id="@+id/home_pressRectange1"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="185dp"
-                        android:layout_height="15dp"
-                        android:layout_marginLeft="20dp"
-                        android:paddingTop="7dp"
-                        android:progressDrawable="@drawable/home_custom_progress_bg"
-                        android:secondaryProgressTint="#B24040" />
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="225dp"
-                android:layout_height="110dp"
-                android:layout_marginLeft="15dp"
-                android:background="#2196F3"
-                app:cardBackgroundColor="#D1E5F4"
-                app:cardCornerRadius="25dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="10dp">
-                        <RelativeLayout
-                            android:layout_width="30dp"
-                            android:layout_marginLeft="20dp"
-                            android:layout_gravity="center"
-                            android:layout_height="15dp"
-                            android:background="@drawable/home_border_tag_right" />
-                        <TextView
-                            android:id="@+id/home_txtTieuDeCVInpgress2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="20dp"
-                            android:layout_gravity="center"
-                            android:text="Office Project" />
-
-                    </TableRow>
-
-                    <TextView
-                        android:id="@+id/home_txtTenCVInpgress2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="51dp"
-                        android:layout_marginLeft="20dp"
-                        android:paddingTop="5dp"
-                        android:text="Grocery shopping app design"
-                        android:textSize="17sp"
-                        android:textStyle="bold" />
-
-                    <ProgressBar
-                        android:id="@+id/home_pressRectange2"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="185dp"
-                        android:layout_height="15dp"
-                        android:layout_marginLeft="20dp"
-                        android:paddingTop="7dp"
-                        android:progressDrawable="@drawable/home_custom_progress_bg"
-                        android:secondaryProgressTint="#B24040" />
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="225dp"
-                android:layout_height="110dp"
-                android:layout_marginLeft="15dp"
-                android:background="#2196F3"
-                app:cardBackgroundColor="#D1E5F4"
-                app:cardCornerRadius="25dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="10dp">
-                        <RelativeLayout
-                            android:layout_width="30dp"
-                            android:layout_marginLeft="20dp"
-                            android:layout_gravity="center"
-                            android:layout_height="15dp"
-                            android:background="@drawable/home_border_tag_right" />
-                        <TextView
-                            android:id="@+id/home_txtTieuDeCVInpgress3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="20dp"
-                            android:layout_gravity="center"
-                            android:text="Office Project" />
-
-                    </TableRow>
-
-                    <TextView
-                        android:id="@+id/home_txtTenCVInpgress3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="51dp"
-                        android:layout_marginLeft="20dp"
-                        android:paddingTop="5dp"
-                        android:text="Grocery shopping app design"
-                        android:textSize="17sp"
-                        android:textStyle="bold" />
-
-                    <ProgressBar
-                        android:id="@+id/home_pressRectange3"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="185dp"
-                        android:layout_height="15dp"
-                        android:layout_marginLeft="20dp"
-                        android:paddingTop="7dp"
-                        android:progressDrawable="@drawable/home_custom_progress_bg"
-                        android:secondaryProgressTint="#B24040" />
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
-    </HorizontalScrollView>
 
     <TableRow
         android:layout_width="match_parent"
@@ -409,7 +189,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/baloo_thambi"
             android:paddingLeft="20dp"
-            android:text="Task Groups"
+            android:text="Nhóm nhiệm vụ"
             android:textSize="20dp"
             android:textStyle="bold" />
 
@@ -422,7 +202,7 @@
             app:cardCornerRadius="10dp">
 
             <TextView
-                android:id="@+id/txtNumTask"
+                android:id="@+id/home_task_group"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -432,275 +212,19 @@
 
     </TableRow>
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcv_task_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:divider="@null"
+            android:orientation="horizontal"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            app:reverseLayout="true" />
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp">
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    app:cardCornerRadius="20dp">
-
-                    <RelativeLayout
-                        android:layout_width="50sp"
-                        android:layout_height="30dp"
-                        android:layout_centerInParent="true"
-                        android:layout_gravity="center"
-                        android:layout_marginRight="150dp"
-                        android:background="@drawable/home_border_tag_right" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="80dp"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/home_txtTieuDeCV1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="start"
-                            android:text="Office Project"
-                            android:textSize="20dp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/home_txtTenCV1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="start"
-                            android:text="23 Tasks!"
-                            android:textSize="18dp" />
-                    </LinearLayout>
-
-                    <ProgressBar
-                        android:id="@+id/home_progress_circular2"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="140dp"
-                        android:indeterminateOnly="false"
-                        android:progressDrawable="@drawable/home_custom_progress_circle" />
-
-                    <TextView
-                        android:id="@+id/home_txt_progress_circular"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="140dp"
-                        android:text="75%"
-                        android:textStyle="bold" />
-                </androidx.cardview.widget.CardView>
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp">
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    app:cardCornerRadius="20dp">
-
-                    <RelativeLayout
-                        android:layout_gravity="center"
-                        android:layout_marginRight="150dp"
-                        android:layout_width="50sp"
-                        android:layout_height="30sp"
-                        android:background="@drawable/home_border_tag_right"
-                        android:layout_centerInParent="true"/>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="80dp"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/home_txtTieuDeCV2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="start"
-                            android:text="Office Project"
-                            android:textSize="20dp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/home_txtTenCV2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="start"
-                            android:text="23 Tasks!"
-                            android:textSize="18dp" />
-                    </LinearLayout>
-
-                    <ProgressBar
-                        android:id="@+id/home_progress_circular3"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="140dp"
-                        android:indeterminateOnly="false"
-                        android:progressDrawable="@drawable/home_custom_progress_circle" />
-
-                    <TextView
-                        android:id="@+id/home_txtProgressCircle2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="140dp"
-                        android:text="75%"
-                        android:textStyle="bold" />
-                </androidx.cardview.widget.CardView>
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp">
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    app:cardCornerRadius="20dp">
-
-                    <RelativeLayout
-                        android:layout_gravity="center"
-                        android:layout_marginRight="150dp"
-                        android:layout_width="50sp"
-                        android:layout_height="30sp"
-                        android:background="@drawable/home_border_tag_right"
-                        android:layout_centerInParent="true"/>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="80dp"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/home_txtTieuDeCV3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="start"
-                            android:text="Office Project"
-                            android:textSize="20dp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/home_txtTenCV3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="start"
-                            android:text="23 Tasks!"
-                            android:textSize="18dp" />
-                    </LinearLayout>
-
-                    <ProgressBar
-                        android:id="@+id/home_progress_circular4"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="140dp"
-                        android:indeterminateOnly="false"
-                        android:progressDrawable="@drawable/home_custom_progress_circle" />
-
-                    <TextView
-                        android:id="@+id/home_txtProgressCircle3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="140dp"
-                        android:text="75%"
-                        android:textStyle="bold" />
-                </androidx.cardview.widget.CardView>
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp">
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    app:cardCornerRadius="20dp">
-
-                    <RelativeLayout
-                        android:layout_gravity="center"
-                        android:layout_marginRight="150dp"
-                        android:layout_width="50sp"
-                        android:layout_height="30sp"
-                        android:background="@drawable/home_border_tag_right"
-                        android:layout_centerInParent="true"/>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="80dp"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/home_txtTieuDeCV4"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="start"
-                            android:text="Office Project"
-                            android:textSize="20dp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/home_txtTenCV4"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="start"
-                            android:text="23 Tasks!"
-                            android:textSize="18dp" />
-                    </LinearLayout>
-
-                    <ProgressBar
-                        android:id="@+id/home_progress_circular5"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="140dp"
-                        android:indeterminateOnly="false"
-                        android:progressDrawable="@drawable/home_custom_progress_circle" />
-
-                    <TextView
-                        android:id="@+id/home_txtProgressCircle4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="140dp"
-                        android:text="75%"
-                        android:textStyle="bold" />
-                </androidx.cardview.widget.CardView>
-            </TableRow>
-        </LinearLayout>
-    </ScrollView>
-
+    </RelativeLayout>
 </LinearLayout>
