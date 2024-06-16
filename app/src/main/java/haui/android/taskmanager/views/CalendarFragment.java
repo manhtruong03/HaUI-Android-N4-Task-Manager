@@ -2,6 +2,8 @@ package haui.android.taskmanager.views;
 
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,10 +12,12 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CalendarView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,6 +34,7 @@ public class CalendarFragment extends Fragment {
     private CalendarView calendarView;
     private ListView calender_ListView;
     private DBHelper dbHelper;
+    List<Task> tasks = null;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -85,17 +90,57 @@ public class CalendarFragment extends Fragment {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
                 String date = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, dayOfMonth);
-
-                // Fetch tasks for the selected date
-                List<Task> tasks = dbHelper.getTasksByDay(date);
-
-                // Display the tasks in the ListView
+                //lấy tasks theo ngày
+                tasks = dbHelper.getTasksByDay(date);
+                //Sửa format ngày
+                // Hiển thị tasks lên ListView
                 displayTasks(tasks);
             }
         });
-        
+        calender_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String data = String.valueOf(tasks.get(position).getTaskID());
+
+                Fragment editTaskFragment = EditTaskFragment.newInstance(data);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, editTaskFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+        calender_ListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                showDeleteConfirmationDialog(position);
+                return true;
+            }
+        });
+
         return view;
         // return inflater.inflate(R.layout.fragment_calendar, container, false);
+    }
+    private void showDeleteConfirmationDialog(int position) {
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Delete Confirmation")
+                .setMessage("Bạn có chắc chắn xóa công việc này không?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    private DialogInterface dialog;
+                    private int which;
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        this.dialog = dialog;
+                        this.which = which;
+                        // Remove the item from the list
+                        dbHelper.deleteTask(tasks.get(position).getTaskID());
+                        tasks.remove(position);
+                        arrayAdapter.notifyDataSetChanged();
+                        Toast.makeText(getActivity(), "Xóa thành công.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_delete)
+                .show();
     }
     private void displayTasks(List<Task> tasks) {
         // If no tasks, show a toast message
@@ -106,4 +151,5 @@ public class CalendarFragment extends Fragment {
         calender_ListView.setAdapter(arrayAdapter);
 
     }
+
 }
