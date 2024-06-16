@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import haui.android.taskmanager.MainActivity;
 import haui.android.taskmanager.R;
 import haui.android.taskmanager.controller.DBHelper;
 import haui.android.taskmanager.models.HomeListTag;
@@ -37,11 +38,10 @@ public class HomeFragment extends Fragment{
     DBHelper dbHelper;
     RecyclerView rcv_ingrogres, rcv_task_group;
     ProgressBar home_progress_circular1;
-    HomeInprogressAdapter homeAdapter;
-
-    TextView test;
+    public static HomeInprogressAdapter homeAdapter;
+    public static TextView home_so_luong_nhom;
     HomeTaskGroupAdapter homeTaskGroupAdapter;
-    TextView home_txtInProgress, home_so_luong_nhom, home_txtProgressCircle1;
+    TextView home_txtInProgress, home_txtProgressCircle1;
     SQLiteDatabase db;
     Button home_btnViewTask;
     List<Tag> tagList;
@@ -60,7 +60,7 @@ public class HomeFragment extends Fragment{
         rcv_ingrogres.setLayoutManager(linearLayoutManager);
         List<TaskDetail> allListTask = dbHelper.getAllTasksDetail();
         List<Task> TaskInprogress = dbHelper.getAllTasksByStatus(2);
-        homeAdapter = new HomeInprogressAdapter(allListTask);
+        homeAdapter = new HomeInprogressAdapter(allListTask, (MainActivity) getActivity());
         rcv_ingrogres.setAdapter(homeAdapter);
         homeAdapter.notifyDataSetChanged();
         home_txtInProgress.setText(TaskInprogress.size() + "");
@@ -70,7 +70,7 @@ public class HomeFragment extends Fragment{
         tagList = dbHelper.getAllTags(); // Lấy số lượng nhóm nhiệm vụ
         allListTaskDetail = Classify(allListTask);
         home_so_luong_nhom.setText(countUniqueTagColors(allListTaskDetail) +"");
-        homeTaskGroupAdapter = new HomeTaskGroupAdapter(allListTask, countUniqueTagColors(allListTaskDetail), allListTaskDetail, new HomeTaskGroupAdapter.ICickHomeListTag() {
+        homeTaskGroupAdapter = new HomeTaskGroupAdapter(allListTask, countUniqueTagColors(allListTaskDetail), allListTaskDetail, (MainActivity) getActivity(), new HomeTaskGroupAdapter.ICickHomeListTag() {
             @Override
             public void onItemClick(HomeListTag homeListTag) {
                 goToHomeDeDetailTGFragment(homeListTag);

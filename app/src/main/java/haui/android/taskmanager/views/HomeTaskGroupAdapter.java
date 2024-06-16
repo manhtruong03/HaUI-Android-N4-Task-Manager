@@ -1,6 +1,7 @@
 package haui.android.taskmanager.views;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
@@ -9,13 +10,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import haui.android.taskmanager.MainActivity;
 import haui.android.taskmanager.R;
 import haui.android.taskmanager.controller.DBHelper;
 import haui.android.taskmanager.models.HomeListTag;
@@ -27,16 +33,20 @@ public class HomeTaskGroupAdapter  extends RecyclerView.Adapter<HomeTaskGroupAda
     private List<TaskDetail> listTask;
     private int amountTag;
     private List<HomeListTag> allListTaskDetail;
+    DBHelper dbHelper;
+    private MainActivity activity;
+
     public interface ICickHomeListTag {
         void onItemClick(HomeListTag homeListTag);
     }
 
     private ICickHomeListTag listener;
 
-    public HomeTaskGroupAdapter(List<TaskDetail> listTask, int amountTag, List<HomeListTag> allListTaskDetail, ICickHomeListTag listener) {
+    public HomeTaskGroupAdapter(List<TaskDetail> listTask, int amountTag, List<HomeListTag> allListTaskDetail, MainActivity activity, ICickHomeListTag listener) {
         this.listTask = listTask;
         this.amountTag = amountTag;
         this.listener = listener;
+        this.activity = activity;
         this.allListTaskDetail = allListTaskDetail;
     }
     @NonNull
@@ -92,24 +102,57 @@ public class HomeTaskGroupAdapter  extends RecyclerView.Adapter<HomeTaskGroupAda
         holder.home_progress_circular_task_group.setMax(100);
         holder.home_progress_circular_task_group.setProgress(x);
         holder.home_txt_progress_circular_task_group.setText(x+"%");
-
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (listener != null) { // Check if listener is set (if using interface)
-//                    listener.onItemClick(allListTaskDetail.get(position));
-//                } else {
-//                    // Handle item click directly here (without interface)
-//                    // You can access the HomeListTag object using allListTaskDetail.get(position)
-//                }
-//            }
-//        });
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.onItemClick(homeListTag1);
             }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (homeListTag1 != null && position >= 0 && position < allListTaskDetail.size()) {
+                    HomeListTag selectedHomeListTag = homeListTag1;
+                    dbHelper = new DBHelper(v.getContext());
+
+                    List<Integer> taskIDsToDelete = new ArrayList<>();
+                    for (TaskDetail taskDetail : selectedHomeListTag.getTaskDetailList()) {
+                        taskIDsToDelete.add(taskDetail.getTask().getTaskID());
+                    }
+
+                    // You can implement a custom dialog or logic for confirmation here
+                    new AlertDialog.Builder(activity)
+                            .setTitle("Delete Confirmation")
+                            .setMessage("Bạn có chắc chắn xóa công việc này không?")
+                            .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                                for(int i = 0; i < taskIDsToDelete.size(); i++){
+                                    dbHelper.deleteTask(taskIDsToDelete.get(i));
+                                }
+                                // Update the adapter data and UI
+                                allListTaskDetail.remove(position);
+//                                homeAdapter.notifyDataSetChanged();
+                                Fragment editTaskFragment = new HomeFragment();
+                                if (editTaskFragment != null) {
+                                    FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                                    transaction.replace(R.id.fragment_container, editTaskFragment)
+                                            .addToBackStack(null)
+                                            .commit();
+                                } else {
+                                    Toast.makeText(v.getContext(), "Failed to create EditTaskFragment", Toast.LENGTH_SHORT).show();
+                                }
+//                                home_so_luong_nhom.setText(mListTaskInprogress.size());
+                                Toast.makeText(activity, "Xóa thành công.", Toast.LENGTH_SHORT).show();
+                            })
+                            .setNegativeButton(android.R.string.no, null)
+                            .setIcon(android.R.drawable.ic_delete)
+                            .show();
+                } else {
+                    Toast.makeText(v.getContext(), "Invalid task detail position", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+
         });
     }
 

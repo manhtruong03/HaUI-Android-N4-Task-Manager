@@ -1,24 +1,38 @@
 package haui.android.taskmanager.views;
 
+import static haui.android.taskmanager.views.HomeFragment.homeAdapter;
+import static haui.android.taskmanager.views.HomeFragment.home_so_luong_nhom;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import haui.android.taskmanager.MainActivity;
 import haui.android.taskmanager.R;
+import haui.android.taskmanager.controller.DBHelper;
 import haui.android.taskmanager.models.TaskDetail;
 
 public class HomeInprogressAdapter extends RecyclerView.Adapter<HomeInprogressAdapter.HomeViewHolder> {
     private List<TaskDetail> mListTask;
 
     private List<TaskDetail> mListTaskInprogress = new ArrayList<>();
+    private MainActivity activity;
+    DBHelper dbHelper;
 
     public void Classify(){
         for(int i = 0; i < mListTask.size(); i++) {
@@ -27,8 +41,9 @@ public class HomeInprogressAdapter extends RecyclerView.Adapter<HomeInprogressAd
         }
     }
 
-    public HomeInprogressAdapter(List<TaskDetail> mListTask) {
+    public HomeInprogressAdapter(List<TaskDetail> mListTask, MainActivity activity) {
         this.mListTask = mListTask;
+        this.activity = activity;
         Classify();
     }
 
@@ -71,8 +86,73 @@ public class HomeInprogressAdapter extends RecyclerView.Adapter<HomeInprogressAd
         }
         holder.home_name.setText(home.getTask().getTaskName());
         holder.home_description.setText(home.getTask().getDescription());
-    }
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListTaskInprogress != null && position >= 0 && position < mListTaskInprogress.size()) {
+                    TaskDetail selectedTaskDetail = mListTaskInprogress.get(position);
+                    String taskID = String.valueOf(selectedTaskDetail.getTask().getTaskID());
+                    Log.d("ID task", "onItemClick: " + taskID);
+
+                    // Assuming you have an EditTaskFragment class
+                    Fragment editTaskFragment = EditTaskFragment.newInstance(taskID);
+                    if (editTaskFragment != null) {
+                        FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                        FragmentTransaction transaction = fragmentManager.beginTransaction();
+                        transaction.replace(R.id.fragment_container, editTaskFragment)
+                                .addToBackStack(null)
+                                .commit();
+                    } else {
+                        Toast.makeText(v.getContext(), "Failed to create EditTaskFragment", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(v.getContext(), "Invalid task detail position", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (home != null && position >= 0 && position < mListTaskInprogress.size()) {
+                    TaskDetail selectedTaskDetail = home;
+                    int taskID = selectedTaskDetail.getTask().getTaskID();
+                    dbHelper = new DBHelper(v.getContext());
+
+                    // You can implement a custom dialog or logic for confirmation here
+                    new AlertDialog.Builder(activity)
+                            .setTitle("Delete Confirmation")
+                            .setMessage("Bạn có chắc chắn xóa công việc này không?")
+                            .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                                dbHelper.deleteTask(taskID);
+
+                                // Update the adapter data and UI
+                                mListTaskInprogress.removeIf(taskDetail -> taskDetail.getTask().getTaskID() == taskID);
+//                                homeAdapter.notifyDataSetChanged();
+                                Fragment editTaskFragment = new HomeFragment();
+                                if (editTaskFragment != null) {
+                                    FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                                    transaction.replace(R.id.fragment_container, editTaskFragment)
+                                            .addToBackStack(null)
+                                            .commit();
+                                } else {
+                                    Toast.makeText(v.getContext(), "Failed to create EditTaskFragment", Toast.LENGTH_SHORT).show();
+                                }
+//                                home_so_luong_nhom.setText(mListTaskInprogress.size());
+                                Toast.makeText(activity, "Xóa thành công.", Toast.LENGTH_SHORT).show();
+                            })
+                            .setNegativeButton(android.R.string.no, null)
+                            .setIcon(android.R.drawable.ic_delete)
+                            .show();
+                } else {
+                    Toast.makeText(v.getContext(), "Invalid task detail position", Toast.LENGTH_SHORT).show();
+                }
+                return false;
+            }
+        });
+    }
     @Override
     public int getItemCount() {
         if(mListTaskInprogress != null) return mListTaskInprogress.size();
