@@ -25,33 +25,14 @@ import haui.android.taskmanager.models.TaskDetail;
 public class HomeTaskGroupAdapter  extends RecyclerView.Adapter<HomeTaskGroupAdapter.HomeTaskGroupAdapterViewHolder>{
 
     private List<TaskDetail> listTask;
-    private List<TaskDetail> taskDetails;
-    private List<Tag> tagList;
     private int amountTag;
     private List<HomeListTag> allListTaskDetail;
-    DBHelper dbHelper1;
-    SQLiteDatabase db;
-    Context context;
     public interface ICickHomeListTag {
         void onItemClick(HomeListTag homeListTag);
     }
 
     private ICickHomeListTag listener;
-//    public List<HomeListTag> Classify(List<TaskDetail> listTask){
-//        db = this.dbHelper1.getWritableDatabase();
-//        for(int i = 0; i < listTask.size(); i++) {
-//            TaskDetail taskDetail = listTask.get(i);
-//            for(int k = 0; k < tagList.size(); k++) {
-//                if(tagList.get(k).getTagID() == taskDetail.getTask().getTagID()) {
-//                    taskDetails = dbHelper1.getAllTaskDetailByTagId(tagList.get(k).getTagID());
-//                    HomeListTag homeListTag = new HomeListTag(tagList.get(k).getTagID(), taskDetails);
-////                    HomeListTag homeListTag = dbHelper1.getHomeListTag(tagList.get(k).getTagID());
-//                    allListTaskDetail.add(homeListTag);
-//                }
-//            }
-//        }
-//        return allListTaskDetail;
-//    }
+
     public HomeTaskGroupAdapter(List<TaskDetail> listTask, int amountTag, List<HomeListTag> allListTaskDetail, ICickHomeListTag listener) {
         this.listTask = listTask;
         this.amountTag = amountTag;

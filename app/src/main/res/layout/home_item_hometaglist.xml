@@ -1,6 +1,6 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
@@ -10,16 +10,18 @@
         android:id="@+id/home_custom_tag_group_hometaglist"
         android:layout_width="50sp"
         android:layout_height="20dp"
+        android:layout_marginLeft="10dp"
         android:layout_centerInParent="true"
         android:layout_gravity="center"
-        android:layout_marginRight="160dp"
+        android:layout_marginRight="170dp"
         android:background="@drawable/home_border_tag_pink" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="80dp"
         android:gravity="center"
+        android:paddingTop="10dp"
         android:orientation="vertical">
 
         <TextView
@@ -30,23 +32,32 @@
             android:text="Công việc"
             android:textSize="20dp"
             android:textStyle="bold" />
+        <TextView
+            android:id="@+id/task_txt_decription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="start"
+            android:text="Hoàn thành bài tập lớn Android"
+            android:textColor="#6A6A6A"
+            android:textSize="16dp" />
 
-        <TableRow android:layout_width="wrap_content"
-            android:layout_gravity=""
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/home_thoi_gian_congviec_hometaglist"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:text="09:00 - 2024-06-01"
-                android:textSize="18dp" />
+        <TextView
+            android:id="@+id/home_thoi_gian_congviec_hometaglist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.8"
+            android:layout_gravity="start"
+            android:text="14:00 - 01/06/2024 đến 16:00 - 06/06/2024"
+            android:textSize="14dp" />
+        <TextView
+            android:id="@+id/home_txt_progress_task_group_hometaglist"
+            android:layout_width="wrap_content"
+            android:layout_gravity="end"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
+            android:text="Đang làm"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/home_txt_progress_task_group_hometaglist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Đang làm"
-                android:textStyle="bold" />
-        </TableRow>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

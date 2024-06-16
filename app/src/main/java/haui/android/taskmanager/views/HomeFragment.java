@@ -20,8 +20,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import haui.android.taskmanager.R;
@@ -127,24 +129,33 @@ public class HomeFragment extends Fragment{
         homeDetailTGFragment.setArguments(bundle);
         fragmentTransaction.replace(R.id.fragment_container, homeDetailTGFragment).commit();
     }
+    public List<HomeListTag> Classify(List<TaskDetail> listTask) {
+        List<HomeListTag> allListTaskDetail = new ArrayList<>();
+        Map<Integer, List<TaskDetail>> mapTaskByTag = new HashMap<>(); // Map to store tasks grouped by tag ID
 
-    public List<HomeListTag> Classify(List<TaskDetail> listTask){
-        List<HomeListTag> allListTaskDetail1 = new ArrayList<HomeListTag>();
-        List<TaskDetail> taskDetails;
-        db = this.dbHelper.getWritableDatabase();
-        for(int i = 0; i < listTask.size(); i++) {
-            TaskDetail taskDetail = listTask.get(i);
-            for(int k = 0; k < tagList.size(); k++) {
-                if(tagList.get(k).getTagID() == taskDetail.getTask().getTagID()) {
-                    taskDetails = dbHelper.getAllTaskDetailByTagId(tagList.get(k).getTagID());
-                    HomeListTag homeListTag = new HomeListTag(taskDetail.getTask().getTagID(), taskDetails);
-//                    HomeListTag homeListTag = dbHelper1.getHomeListTag(tagList.get(k).getTagID());
-                    allListTaskDetail1.add(homeListTag);
-                }
+        for (TaskDetail taskDetail : listTask) {
+            int tagId = taskDetail.getTask().getTagID();
+
+            // Check if a list exists for the current tag ID in the map
+            if (!mapTaskByTag.containsKey(tagId)) {
+                mapTaskByTag.put(tagId, new ArrayList<>()); // Create a new list for the tag if it doesn't exist
             }
+
+            // Add the current task detail to the corresponding list in the map
+            mapTaskByTag.get(tagId).add(taskDetail);
         }
-        return allListTaskDetail1;
+
+        // Convert the Map entries to HomeListTag objects
+        for (Map.Entry<Integer, List<TaskDetail>> entry : mapTaskByTag.entrySet()) {
+            int tagId = entry.getKey();
+            List<TaskDetail> taskDetails = entry.getValue();
+            HomeListTag homeListTag = new HomeListTag(tagId, taskDetails);
+            allListTaskDetail.add(homeListTag);
+        }
+
+        return allListTaskDetail;
     }
+
 
     public int countUniqueTagColors(List<HomeListTag> allListTaskDetail) {
         Set<String> uniqueTagColors = new HashSet<>();

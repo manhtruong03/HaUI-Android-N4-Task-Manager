@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:background="@drawable/border_item_list_task"
     android:paddingTop="12dp"
@@ -9,9 +10,11 @@
     android:paddingLeft="8dp"
     android:paddingRight="8dp"
     android:layout_margin="12dp"
+    app:cardCornerRadius="20dp"
     android:id="@+id/item_work">
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:paddingTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -42,6 +45,7 @@
             android:layout_height="wrap_content"
             android:alpha="0.8"
             android:text="Today At 16:45"
-            android:textSize="14dp" />
+            android:textSize="14dp"
+            android:layout_marginBottom="10dp" />
     </androidx.appcompat.widget.LinearLayoutCompat>
-</androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.cardview.widget.CardView>
