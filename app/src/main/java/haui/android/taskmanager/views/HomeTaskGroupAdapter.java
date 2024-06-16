@@ -123,7 +123,7 @@ public class HomeTaskGroupAdapter  extends RecyclerView.Adapter<HomeTaskGroupAda
                     // You can implement a custom dialog or logic for confirmation here
                     new AlertDialog.Builder(activity)
                             .setTitle("Delete Confirmation")
-                            .setMessage("Bạn có chắc chắn xóa công việc này không?")
+                            .setMessage("Bạn có chắc chắn xóa nhóm nhiệm vụ này không?")
                             .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                                 for(int i = 0; i < taskIDsToDelete.size(); i++){
                                     dbHelper.deleteTask(taskIDsToDelete.get(i));

@@ -33,6 +33,7 @@ public class HomeDetailTGAdapter extends ArrayAdapter<TaskDetail> {
         TextView homeThoiGianCongViecHometaglist = convertView.findViewById(R.id.home_thoi_gian_congviec_hometaglist);
         TextView homeTenCongViecHometaglist = convertView.findViewById(R.id.home_ten_congviec_hometaglist);
         TextView homeTxtProgressTaskGroupHometaglist = convertView.findViewById(R.id.home_txt_progress_task_group_hometaglist);
+        TextView homeTxtDecription = convertView.findViewById(R.id.home_txt_decription);
 
         if (taskDetail != null) {
             String color = taskDetail.getTag().getTagColor();
@@ -63,6 +64,8 @@ public class HomeDetailTGAdapter extends ArrayAdapter<TaskDetail> {
             }
             homeThoiGianCongViecHometaglist.setText(taskDetail.getTask().getStartTime() + " - " + taskDetail.getTask().getStartDate() + " đến " + taskDetail.getTask().getEndTime() + " - " + taskDetail.getTask().getEndDate());
             homeTenCongViecHometaglist.setText(taskDetail.getTask().getTaskName());
+            homeTxtDecription.setText(taskDetail.getTask().getDescription());
+
             String status = "";
             int statusId = taskDetail.getStatus().getStatusID();
             switch (statusId) {

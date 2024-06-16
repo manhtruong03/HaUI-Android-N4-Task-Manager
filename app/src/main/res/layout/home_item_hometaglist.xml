@@ -19,7 +19,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="80dp"
+        android:layout_marginLeft="70dp"
         android:gravity="center"
         android:paddingTop="10dp"
         android:orientation="vertical">
@@ -33,8 +33,8 @@
             android:textSize="20dp"
             android:textStyle="bold" />
         <TextView
-            android:id="@+id/task_txt_decription"
-            android:layout_width="wrap_content"
+            android:id="@+id/home_txt_decription"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="2dp"
             android:layout_gravity="start"
@@ -55,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_gravity="end"
             android:layout_height="wrap_content"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="45dp"
             android:text="Đang làm"
             android:textStyle="bold" />
 
