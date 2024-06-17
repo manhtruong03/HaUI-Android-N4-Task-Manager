@@ -93,7 +93,7 @@
                     android:textColor="@color/white"
                     android:layout_marginRight="120dp"
                     android:textAlignment="textStart"
-                    android:text="Tiến độ hoàn thành nhiệm vụ!" />
+                    android:text="Tiến độ hoàn thành công việc!" />
 
                 <Button
                     android:id="@+id/home_btnViewTask"
@@ -101,7 +101,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_marginRight="110dp"
-                    android:text="Xem nhiệm vụ"
+                    android:text="Xem công việc"
                     android:textColor="@color/white" />
 
 
@@ -189,7 +189,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/baloo_thambi"
             android:paddingLeft="20dp"
-            android:text="Nhóm nhiệm vụ"
+            android:text="Nhóm công việc"
             android:textSize="20dp"
             android:textStyle="bold" />
 
