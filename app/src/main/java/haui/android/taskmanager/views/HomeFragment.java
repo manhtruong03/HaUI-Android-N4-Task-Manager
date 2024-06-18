@@ -20,10 +20,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import haui.android.taskmanager.MainActivity;
 import haui.android.taskmanager.R;
 import haui.android.taskmanager.controller.DBHelper;
 import haui.android.taskmanager.models.HomeListTag;
@@ -35,11 +38,10 @@ public class HomeFragment extends Fragment{
     DBHelper dbHelper;
     RecyclerView rcv_ingrogres, rcv_task_group;
     ProgressBar home_progress_circular1;
-    HomeInprogressAdapter homeAdapter;
-
-    TextView test;
+    public static HomeInprogressAdapter homeAdapter;
+    public static TextView home_so_luong_nhom;
     HomeTaskGroupAdapter homeTaskGroupAdapter;
-    TextView home_txtInProgress, home_so_luong_nhom, home_txtProgressCircle1;
+    TextView home_txtInProgress, home_txtProgressCircle1;
     SQLiteDatabase db;
     Button home_btnViewTask;
     List<Tag> tagList;
@@ -58,7 +60,7 @@ public class HomeFragment extends Fragment{
         rcv_ingrogres.setLayoutManager(linearLayoutManager);
         List<TaskDetail> allListTask = dbHelper.getAllTasksDetail();
         List<Task> TaskInprogress = dbHelper.getAllTasksByStatus(2);
-        homeAdapter = new HomeInprogressAdapter(allListTask);
+        homeAdapter = new HomeInprogressAdapter(allListTask, (MainActivity) getActivity());
         rcv_ingrogres.setAdapter(homeAdapter);
         homeAdapter.notifyDataSetChanged();
         home_txtInProgress.setText(TaskInprogress.size() + "");
@@ -68,7 +70,7 @@ public class HomeFragment extends Fragment{
         tagList = dbHelper.getAllTags(); // Lấy số lượng nhóm nhiệm vụ
         allListTaskDetail = Classify(allListTask);
         home_so_luong_nhom.setText(countUniqueTagColors(allListTaskDetail) +"");
-        homeTaskGroupAdapter = new HomeTaskGroupAdapter(allListTask, countUniqueTagColors(allListTaskDetail), allListTaskDetail, new HomeTaskGroupAdapter.ICickHomeListTag() {
+        homeTaskGroupAdapter = new HomeTaskGroupAdapter(allListTask, countUniqueTagColors(allListTaskDetail), allListTaskDetail, (MainActivity) getActivity(), new HomeTaskGroupAdapter.ICickHomeListTag() {
             @Override
             public void onItemClick(HomeListTag homeListTag) {
                 goToHomeDeDetailTGFragment(homeListTag);
@@ -127,24 +129,33 @@ public class HomeFragment extends Fragment{
         homeDetailTGFragment.setArguments(bundle);
         fragmentTransaction.replace(R.id.fragment_container, homeDetailTGFragment).commit();
     }
+    public List<HomeListTag> Classify(List<TaskDetail> listTask) {
+        List<HomeListTag> allListTaskDetail = new ArrayList<>();
+        Map<Integer, List<TaskDetail>> mapTaskByTag = new HashMap<>(); // Map to store tasks grouped by tag ID
 
-    public List<HomeListTag> Classify(List<TaskDetail> listTask){
-        List<HomeListTag> allListTaskDetail1 = new ArrayList<HomeListTag>();
-        List<TaskDetail> taskDetails;
-        db = this.dbHelper.getWritableDatabase();
-        for(int i = 0; i < listTask.size(); i++) {
-            TaskDetail taskDetail = listTask.get(i);
-            for(int k = 0; k < tagList.size(); k++) {
-                if(tagList.get(k).getTagID() == taskDetail.getTask().getTagID()) {
-                    taskDetails = dbHelper.getAllTaskDetailByTagId(tagList.get(k).getTagID());
-                    HomeListTag homeListTag = new HomeListTag(taskDetail.getTask().getTagID(), taskDetails);
-//                    HomeListTag homeListTag = dbHelper1.getHomeListTag(tagList.get(k).getTagID());
-                    allListTaskDetail1.add(homeListTag);
-                }
+        for (TaskDetail taskDetail : listTask) {
+            int tagId = taskDetail.getTask().getTagID();
+
+            // Check if a list exists for the current tag ID in the map
+            if (!mapTaskByTag.containsKey(tagId)) {
+                mapTaskByTag.put(tagId, new ArrayList<>()); // Create a new list for the tag if it doesn't exist
             }
+
+            // Add the current task detail to the corresponding list in the map
+            mapTaskByTag.get(tagId).add(taskDetail);
         }
-        return allListTaskDetail1;
+
+        // Convert the Map entries to HomeListTag objects
+        for (Map.Entry<Integer, List<TaskDetail>> entry : mapTaskByTag.entrySet()) {
+            int tagId = entry.getKey();
+            List<TaskDetail> taskDetails = entry.getValue();
+            HomeListTag homeListTag = new HomeListTag(tagId, taskDetails);
+            allListTaskDetail.add(homeListTag);
+        }
+
+        return allListTaskDetail;
     }
+
 
     public int countUniqueTagColors(List<HomeListTag> allListTaskDetail) {
         Set<String> uniqueTagColors = new HashSet<>();
