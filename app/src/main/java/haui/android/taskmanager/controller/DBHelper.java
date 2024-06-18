@@ -409,6 +409,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public int deleteTag(int tagID) {
         SQLiteDatabase db = this.getWritableDatabase();
+        // Xóa tất cả các tác vụ liên quan đến tag
+        db.delete(TABLE_TASK_NAME, COLUMN_TASK_TAG_ID + " = ?", new String[]{String.valueOf(tagID)});
+        // Sau đó  mới xóa tag
         return db.delete(TABLE_TAG_NAME, COLUMN_TAG_ID + " = ?", new String[]{String.valueOf(tagID)});
     }
 

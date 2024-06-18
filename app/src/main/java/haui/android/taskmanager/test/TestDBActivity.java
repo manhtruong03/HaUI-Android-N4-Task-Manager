@@ -91,7 +91,7 @@ public class TestDBActivity extends AppCompatActivity {
         }
 
         // Test adding a task
-        long newTaskId = dbHelper.insertTask("Test Task", "Task Description", "2024-06-01", "09:00", "2024-06-02", "17:00", 1, 1, 1);
+        long newTaskId = dbHelper.insertTask("Test Task", "Task Description", "01/06/2024", "09:00", "02/06/2024", "17:00", 1, 1, 1);
         Log.d(TAG, "Hàm insertTask() => Đã thêm TaskID: " + newTaskId);
 
         // Test retrieving all tasks
