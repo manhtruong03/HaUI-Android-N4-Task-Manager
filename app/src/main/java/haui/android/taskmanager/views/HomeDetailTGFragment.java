@@ -23,6 +23,7 @@ import haui.android.taskmanager.R;
 import haui.android.taskmanager.controller.DBHelper;
 import haui.android.taskmanager.models.HomeListTag;
 import haui.android.taskmanager.models.TaskDetail;
+import haui.android.taskmanager.notification.NotificationScheduler;
 
 public class HomeDetailTGFragment extends Fragment {
 
@@ -91,7 +92,7 @@ public class HomeDetailTGFragment extends Fragment {
 
                             // You can implement a custom dialog or logic for confirmation here
                             new AlertDialog.Builder(getActivity())
-                                    .setTitle("Delete Confirmation")
+                                    .setTitle("Xác nhận xóa")
                                     .setMessage("Bạn có chắc chắn xóa công việc này không?")
                                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                                         dbHelper.deleteTask(taskID);
@@ -101,6 +102,10 @@ public class HomeDetailTGFragment extends Fragment {
                                         homeDetailTGAdapter.notifyDataSetChanged();
 
                                         Toast.makeText(getActivity(), "Xóa thành công.", Toast.LENGTH_SHORT).show();
+                                        // Xóa thông báo cũ
+                                        NotificationScheduler notificationScheduler = new NotificationScheduler(requireContext());
+                                        notificationScheduler.cancelNotification(taskID + 1000);
+                                        notificationScheduler.cancelNotification(taskID + 1999);
                                     })
                                     .setNegativeButton(android.R.string.no, null)
                                     .setIcon(android.R.drawable.ic_delete)

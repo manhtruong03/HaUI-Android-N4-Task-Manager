@@ -24,6 +24,7 @@ import java.util.Locale;
 import haui.android.taskmanager.R;
 import haui.android.taskmanager.controller.DBHelper;
 import haui.android.taskmanager.models.Task;
+import haui.android.taskmanager.notification.NotificationScheduler;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -132,10 +133,15 @@ public class CalendarFragment extends Fragment {
                         this.dialog = dialog;
                         this.which = which;
                         // Remove the item from the list
-                        dbHelper.deleteTask(tasks.get(position).getTaskID());
+                        int taskID = tasks.get(position).getTaskID();
+                        dbHelper.deleteTask(taskID);
                         tasks.remove(position);
                         arrayAdapter.notifyDataSetChanged();
                         Toast.makeText(getActivity(), "Xóa thành công.", Toast.LENGTH_SHORT).show();
+                        // Xóa thông báo cũ đã hẹn giờ
+                        NotificationScheduler notificationScheduler = new NotificationScheduler(requireContext());
+                        notificationScheduler.cancelNotification(taskID + 1000);
+                        notificationScheduler.cancelNotification(taskID + 1999);
                     }
                 })
                 .setNegativeButton(android.R.string.no, null)

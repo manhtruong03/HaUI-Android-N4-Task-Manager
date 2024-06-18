@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Set default selection
         bottomNavigation.show(1, true);
+        openFragment(new HomeFragment(), -1, -1);
+        subMenuContainer.setVisibility(View.GONE);
 
         // Handle item clicks
         bottomNavigation.setOnClickMenuListener(model -> {
