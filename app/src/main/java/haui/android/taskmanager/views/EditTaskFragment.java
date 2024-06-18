@@ -144,6 +144,13 @@ public class EditTaskFragment extends Fragment {
             timestart.setOnClickListener(v -> chooseTime(timestart));
             dateend.setOnClickListener(v -> chooseDate(dateend));
             timeend.setOnClickListener(v -> chooseTime(timeend));
+
+            // Ngăn không cho bàn phím xuất hiện
+            disableKeyboardForEditText(datestart);
+            disableKeyboardForEditText(timestart);
+            disableKeyboardForEditText(dateend);
+            disableKeyboardForEditText(timeend);
+
             btnUpdate.setOnClickListener(v -> updateTask());
             btnComplete.setOnClickListener(v -> completeTask(currentTask));
             checkBoxWorking.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -163,6 +170,11 @@ public class EditTaskFragment extends Fragment {
         }
 
         return view;
+    }
+
+
+    private void disableKeyboardForEditText(TextInputEditText editText) {
+        editText.setShowSoftInputOnFocus(false);
     }
 
     public void completeTask(Task task){
